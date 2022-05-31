@@ -1,3 +1,5 @@
+import json
+
 import jwt
 from server.config import Settings
 from server.orm import Orm
@@ -17,7 +19,9 @@ async def get_client_info(credentials: str, db: Orm) -> dict or bool:
     client = credentials_validation(credentials)
     if client is not False:
         information = await db.get_client_information(client['user'])
-        return information
+        if information is False:
+            return False
+        return json.loads(information)
     return False
 
 

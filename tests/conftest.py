@@ -30,7 +30,7 @@ def orm():
     orm.delete_test_client()
 
 
-@pytest.fixture()
+@pytest.fixture(scope='function')
 def send_message():
     with grpc.insecure_channel('localhost:5000') as channel:
         stub = GreeterStub(channel)

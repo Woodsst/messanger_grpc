@@ -5,6 +5,7 @@ USER = 'test_user'
 PASSWD = 'passwd'
 OTHER_USER = 'test_user_2'
 ROOM = 'test_room'
+BAD_JWT = 'bad_jwt_format'
 
 
 def jwt_encoder(username: str) -> bytes:

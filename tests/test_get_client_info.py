@@ -1,9 +1,9 @@
-from client_data_for_tests import TOKEN, USER, BAD_TOKEN
+from client_data_for_tests import TOKEN, USER, BAD_TOKEN, BAD_JWT
 from server_proto_pb2 import RequestSelfInfo
 import json
 
 
-def test_get_client_info(server_start, send_message, orm):
+def test_get_client_info(send_message, orm):
     response = send_message.InformationRequest(
         RequestSelfInfo(credentials=TOKEN))
     assert response.status == 1
@@ -19,7 +19,7 @@ def test_get_client_info_bad_request(send_message):
         RequestSelfInfo(credentials=BAD_TOKEN))
     assert response.status == 2
     response = send_message.InformationRequest(
-        RequestSelfInfo(credentials='not_jwt_format')
+        RequestSelfInfo(credentials=BAD_JWT)
     )
     assert response.status == 2
     response = send_message.InformationRequest(

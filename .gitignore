@@ -1,2 +1,7 @@
 venv
 .idea
+all_messages.log
+ex.py
+tests/.pytest_cache
+server/__pycache__
+tests/__pycache__

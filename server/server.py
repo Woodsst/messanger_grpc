@@ -18,8 +18,7 @@ class Greeter(GreeterServicer):
     async def SendMessage(self, request, context) -> Response:
         info = await get_client_info(request.credentials, self.orm)
         if info:
-            client = json.loads(info)
-            client = Client(client['username'])
+            client = Client(info['username'])
             if request.room_name:
                 client.send_message(message=request.message, room_name=request.room_name)
             elif request.other_client:
@@ -30,15 +29,14 @@ class Greeter(GreeterServicer):
     async def InformationRequest(self, request, context) -> ClientInfo:
         info = await get_client_info(request.credentials, self.orm)
         if info:
-            return ClientInfo(json_info=info, status=CodeResult.Value('ok'))
+            return ClientInfo(json_info=json.dumps(info), status=CodeResult.Value('ok'))
         else:
             return ClientInfo(status=CodeResult.Value('bad'))
 
     async def CreateRoom(self, request, context):
         info = await get_client_info(request.credentials, self.orm)
         if info:
-            client = json.loads(info)
-            client = Client(client['username'], self.orm)
+            client = Client(info['username'], self.orm)
             await client.create_room(request.room)
             return Response(status=CodeResult.Value('ok'))
         return Response(status=CodeResult.Value('bad'))

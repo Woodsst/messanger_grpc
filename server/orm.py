@@ -54,6 +54,7 @@ class Orm:
         return information
 
     async def add_new_room(self, room_name: str, creator: str):
+        room_name = f'r_{room_name}'
         self.cursor.execute(sql.SQL("""
         CREATE TABLE IF NOT EXISTS {}
         (
