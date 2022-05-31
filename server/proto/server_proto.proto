@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+service Greeter {
+  rpc InformationRequest (RequestSelfInfo) returns (ClientInfo) {}
+  rpc SendMessage (Message) returns (Response) {}
+  rpc AddFriend (FriendRequest) returns (Response) {}
+  rpc DeleteFriend (DeleteFriendRequest) returns (Response) {}
+  rpc CreateRoom (CreateRoomRequest) returns (Response) {}
+  rpc EnterRoom (EnterRoomRequest) returns (stream RoomUpdate) {}
+  rpc EscapeOutRoom(EscapeRoom) returns (Response) {}
+}
+
+enum CodeResult {
+  unknown_format = 0;
+  ok = 1;
+  bad  = 2;
+}
+
+message ClientInfo {
+  CodeResult status = 1;
+  string json_info = 2;
+}
+
+message RequestSelfInfo {
+  string credentials = 1;
+}
+
+message Response {
+  CodeResult status = 1;
+}
+
+message RoomUpdate {
+  CodeResult status = 1;
+  string new_message = 2;
+}
+
+message Message {
+  string message = 1;
+  string room_name = 2;
+  string other_client = 3;
+  string credentials = 4;
+}
+
+message FriendRequest {
+  string friend = 1;
+  string credentials = 2;
+}
+
+message DeleteFriendRequest {
+  string friend = 1;
+  string credentials = 2;
+}
+
+message CreateRoomRequest {
+  string room = 1;
+  string credentials = 2;
+}
+
+message EnterRoomRequest {
+  string room = 1;
+  string credentials = 2;
+
+}
+
+message EscapeRoom {
+  string room = 1;
+  string credentials = 2;
+}
