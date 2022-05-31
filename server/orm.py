@@ -1,7 +1,7 @@
 import datetime
+import json
 import logging
 import time
-import json
 
 import psycopg
 from psycopg import sql
@@ -48,7 +48,6 @@ class Orm:
 
         if information is None:
             return False
-
         information = self.data_to_dict(information)
         self.conn.commit()
         return information
@@ -67,10 +66,50 @@ class Orm:
         self.conn.commit()
         self.cursor.execute(sql.SQL("""
         INSERT INTO {} (creator, message_time, member, message)
-        VALUES (%s, %s, %s, '')
+        VALUES (%s, %s, %s, 'room created')
         """).format(sql.Identifier(room_name)),
                             (creator, datetime.datetime.now(), creator))
         self.conn.commit()
+
+    async def add_friend(self, user_name: str, friend_name: str) -> bool:
+        if not await self.client_exist(friend_name):
+            return False
+        elif await self.check_friend_exist(friend_name, user_name):
+            return False
+        self.cursor.execute("""
+        UPDATE clients 
+        SET friend_list = array_append(friend_list, %(friend_name)s)
+        WHERE username = %(username)s
+        """, {
+            "friend_name": friend_name,
+            "username": user_name
+        })
+        self.conn.commit()
+        return True
+
+    async def check_friend_exist(self, friend_name: str, user_name: str) -> bool:
+        self.cursor.execute("""
+        SELECT array_position(friend_list, %(friend_name)s) 
+        FROM clients 
+        WHERE username=%(username)s
+        """, {
+            "friend_name": friend_name,
+            "username": user_name
+        })
+        result = self.cursor.fetchone()
+        if result[0] is None:
+            return False
+        return True
+
+    async def client_exist(self, client_name: str) -> bool:
+        self.cursor.execute("""
+        SELECT username 
+        FROM clients
+        WHERE username=%s 
+        """, (client_name,))
+        if self.cursor.fetchone() is None:
+            return False
+        return True
 
     @staticmethod
     def data_to_dict(data: tuple) -> dict:

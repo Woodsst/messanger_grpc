@@ -1,6 +1,7 @@
+import json
+
 from client_data_for_tests import TOKEN, USER, BAD_TOKEN, BAD_JWT
 from server_proto_pb2 import RequestSelfInfo
-import json
 
 
 def test_get_client_info(send_message, orm):

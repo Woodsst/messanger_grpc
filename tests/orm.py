@@ -1,5 +1,7 @@
-import psycopg
 import datetime
+
+import psycopg
+
 from config import Settings
 
 
@@ -20,20 +22,28 @@ class Orm:
     def delete_test_client(self):
         self.cursor.execute("""
         DELETE FROM clients WHERE username='test_user';
+        DELETE FROM clients WHERE username='test_user_2';
+        DELETE FROM clients WHERE username='test_user_3';
         """)
         self.conn.commit()
 
-    def test_client_add(self):
+    def client_add(self, username: str, passwd: str, friend_list: set, room_list: set):
+        friend_list = ''.join(x for x in str(friend_list) if x != "'")
+        room_list = ''.join(x for x in str(room_list) if x != "'")
         self.cursor.execute("""
         INSERT INTO clients (username, passwd, registration_date, friend_list, room_list)
         VALUES (%(username)s, %(passwd)s, %(registration_date)s, %(friend_list)s, %(room_list)s)
         """, {
-            "username": "test_user",
-            "passwd": "12l3k",
+            "username": username,
+            "passwd": passwd,
             "registration_date": datetime.datetime.now(),
-            "friend_list": "{test_client_1, test_client_2}",
-            "room_list": "{test_room_1, test_room_2}"
+            "friend_list": str(friend_list),
+            "room_list": str(room_list)
         }
-        )
+                            )
         self.conn.commit()
 
+    def create_test_clients(self):
+        self.client_add('test_user', 'asd1', {'test_user_1', 'test_user_2'}, {'r_test_room_1', 'r_test_room_2'})
+        self.client_add('test_user_2', 'asasdd1', {'test_user_1', 'test_user_2'}, {'r_test_room_1', 'r_test_room_2'})
+        self.client_add('test_user_3', 'asasdd1', {'test_user_0'}, {'r_test_room_0'})

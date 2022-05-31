@@ -1,12 +1,13 @@
 import json
 import logging
 
+import grpc
+
 from server.client import Client
 from server.credentials import get_client_info
-from server.server_proto_pb2_grpc import add_GreeterServicer_to_server, GreeterServicer
 from server.orm import Orm
 from server.server_proto_pb2 import ClientInfo, CodeResult, Response
-import grpc
+from server.server_proto_pb2_grpc import add_GreeterServicer_to_server, GreeterServicer
 
 logger = logging.getLogger()
 
@@ -33,7 +34,7 @@ class Greeter(GreeterServicer):
         else:
             return ClientInfo(status=CodeResult.Value('bad'))
 
-    async def CreateRoom(self, request, context):
+    async def CreateRoom(self, request, context) -> Response:
         info = await get_client_info(request.credentials, self.orm)
         if info:
             client = Client(info['username'], self.orm)
@@ -47,8 +48,14 @@ class Greeter(GreeterServicer):
     async def EscapeOutRoom(self, request, context):
         pass
 
-    async def AddFriend(self, request, context):
-        pass
+    async def AddFriend(self, request, context) -> Response:
+        info = await get_client_info(request.credentials, self.orm)
+        if info:
+            client = Client(info['username'], self.orm)
+            if await client.add_friend(request.friend):
+                return Response(status=CodeResult.Value('ok'))
+            return Response(status=CodeResult.Value('bad'))
+        return Response(status=CodeResult.Value('bad'))
 
     async def DeleteFriend(self, request, context):
         pass

@@ -1,10 +1,10 @@
+from client_data_for_tests import USER_2, TOKEN, ROOM
 from server_proto_pb2 import Message
-from client_data_for_tests import OTHER_USER, TOKEN, ROOM
 
 
 def test_send_message_for_friend(send_message, orm):
     response = send_message.SendMessage(
-        Message(message='hello', other_client=OTHER_USER, credentials=TOKEN))
+        Message(message='hello', other_client=USER_2, credentials=TOKEN))
     print(response)
 
 

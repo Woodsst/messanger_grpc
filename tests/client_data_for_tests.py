@@ -1,9 +1,11 @@
 import jwt
+
 from config import Settings
 
 USER = 'test_user'
 PASSWD = 'passwd'
-OTHER_USER = 'test_user_2'
+USER_2 = 'test_user_2'
+USER_3 = 'test_user_3'
 ROOM = 'test_room'
 BAD_JWT = 'bad_jwt_format'
 

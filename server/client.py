@@ -1,5 +1,5 @@
-from server.room import Room
 from server.orm import Orm
+from server.room import Room
 
 
 class Client:
@@ -21,13 +21,15 @@ class Client:
         """
         pass
 
-    def add_friend(self, name: str):
+    async def add_friend(self, friend_name: str) -> bool:
         """
         Send friendship offer
-        :param name: friend name
+        :param friend_name: string
         :return:
         """
-        pass
+        if await self.orm.add_friend(self.name, friend_name):
+            return True
+        return False
 
     def connect_room(self, room: Room):
         """
@@ -48,6 +50,8 @@ class Client:
     def send_message(self, message: str, room_name: str = None, other_client=None):
         """
         Send message in room or friend
+        :param other_client: sting
+        :param room_name: string
         :param message: string message
         :return:
         """
