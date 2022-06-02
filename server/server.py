@@ -57,8 +57,14 @@ class Greeter(GreeterServicer):
             return Response(status=CodeResult.Value('bad'))
         return Response(status=CodeResult.Value('bad'))
 
-    async def DeleteFriend(self, request, context):
-        pass
+    async def DeleteFriend(self, request, context) -> Response:
+        info = await get_client_info(request.credentials, self.orm)
+        if info:
+            client = Client(info['username'], self.orm)
+            if await client.remove_friend(request.friend):
+                return Response(status=CodeResult.Value('ok'))
+            return Response(status=CodeResult.Value('bad'))
+        return Response(status=CodeResult.Value('bad'))
 
 
 async def server_run(orm: Orm):

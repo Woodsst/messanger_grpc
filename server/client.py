@@ -56,3 +56,13 @@ class Client:
         :return:
         """
         pass
+
+    async def remove_friend(self, friend_name: str) -> bool:
+        """
+        Remove friend from friend list
+        :param friend_name: string
+        :return: bool
+        """
+        if await self.orm.remove_friend(friend_name, self.name):
+            return True
+        return False

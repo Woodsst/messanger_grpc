@@ -72,22 +72,20 @@ class Orm:
         self.conn.commit()
 
     async def add_friend(self, user_name: str, friend_name: str) -> bool:
-        if not await self.client_exist(friend_name):
-            return False
-        elif await self.check_friend_exist(friend_name, user_name):
-            return False
-        self.cursor.execute("""
-        UPDATE clients 
-        SET friend_list = array_append(friend_list, %(friend_name)s)
-        WHERE username = %(username)s
-        """, {
-            "friend_name": friend_name,
-            "username": user_name
-        })
-        self.conn.commit()
-        return True
+        if await self.check_friend(friend_name, user_name):
+            self.cursor.execute("""
+            UPDATE clients 
+            SET friend_list = array_append(friend_list, %(friend_name)s)
+            WHERE username = %(username)s
+            """, {
+                "friend_name": friend_name,
+                "username": user_name
+            })
+            self.conn.commit()
+            return True
+        return False
 
-    async def check_friend_exist(self, friend_name: str, user_name: str) -> bool:
+    async def check_friend_in_friend_list(self, friend_name: str, user_name: str) -> bool:
         self.cursor.execute("""
         SELECT array_position(friend_list, %(friend_name)s) 
         FROM clients 
@@ -108,6 +106,29 @@ class Orm:
         WHERE username=%s 
         """, (client_name,))
         if self.cursor.fetchone() is None:
+            return False
+        return True
+
+    async def remove_friend(self, friend_name: str, user_name: str) -> bool:
+        if not await self.client_exist(friend_name):
+            return False
+        elif not await self.check_friend_in_friend_list(friend_name, user_name):
+            return False
+        self.cursor.execute("""
+        UPDATE clients 
+        SET friend_list = array_remove(friend_list, %(friend_name)s)
+        WHERE username = %(username)s
+        """, {
+            "friend_name": friend_name,
+            "username": user_name
+        })
+        self.conn.commit()
+        return True
+
+    async def check_friend(self, friend_name: str, user_name: str) -> bool:
+        if not await self.client_exist(friend_name):
+            return False
+        elif await self.check_friend_in_friend_list(friend_name, user_name):
             return False
         return True
 
