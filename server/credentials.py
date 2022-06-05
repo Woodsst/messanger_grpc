@@ -23,5 +23,3 @@ async def get_client_info(credentials: str, db: Orm) -> dict or bool:
             return False
         return json.loads(information)
     return False
-
-

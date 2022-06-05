@@ -21,18 +21,20 @@ class Greeter(GreeterServicer):
         if info:
             client = Client(info['username'])
             if request.room_name:
-                client.send_message(message=request.message, room_name=request.room_name)
+                client.send_message(message=request.message,
+                                    room_name=request.room_name)
             elif request.other_client:
-                client.send_message(message=request.message, other_client=request.other_client)
+                client.send_message(message=request.message,
+                                    other_client=request.other_client)
             return Response(status=CodeResult.Value('ok'))
         return Response(status=CodeResult.Value('bad'))
 
     async def InformationRequest(self, request, context) -> ClientInfo:
         info = await get_client_info(request.credentials, self.orm)
         if info:
-            return ClientInfo(json_info=json.dumps(info), status=CodeResult.Value('ok'))
-        else:
-            return ClientInfo(status=CodeResult.Value('bad'))
+            return ClientInfo(json_info=json.dumps(info),
+                              status=CodeResult.Value('ok'))
+        return ClientInfo(status=CodeResult.Value('bad'))
 
     async def CreateRoom(self, request, context) -> Response:
         info = await get_client_info(request.credentials, self.orm)
@@ -42,11 +44,21 @@ class Greeter(GreeterServicer):
             return Response(status=CodeResult.Value('ok'))
         return Response(status=CodeResult.Value('bad'))
 
-    async def EnterRoom(self, request, context):
-        pass
+    async def JoinRoom(self, request, context):
+        info = await get_client_info(request.credentials, self.orm)
+        if info:
+            client = Client(info['username'], self.orm)
+            if await client.join_room(request.room):
+                return Response(status=CodeResult.Value('ok'))
+        return Response(status=CodeResult.Value('bad'))
 
-    async def EscapeOutRoom(self, request, context):
-        pass
+    async def RoomEscape(self, request, context):
+        info = await get_client_info(request.credentials, self.orm)
+        if info:
+            client = Client(info['username'], self.orm)
+            if await client.room_escape(request.friend):
+                return Response(status=CodeResult.Value('ok'))
+        return Response(status=CodeResult.Value('bad'))
 
     async def AddFriend(self, request, context) -> Response:
         info = await get_client_info(request.credentials, self.orm)
@@ -54,16 +66,14 @@ class Greeter(GreeterServicer):
             client = Client(info['username'], self.orm)
             if await client.add_friend(request.friend):
                 return Response(status=CodeResult.Value('ok'))
-            return Response(status=CodeResult.Value('bad'))
         return Response(status=CodeResult.Value('bad'))
 
-    async def DeleteFriend(self, request, context) -> Response:
+    async def RemoveFriend(self, request, context) -> Response:
         info = await get_client_info(request.credentials, self.orm)
         if info:
             client = Client(info['username'], self.orm)
             if await client.remove_friend(request.friend):
                 return Response(status=CodeResult.Value('ok'))
-            return Response(status=CodeResult.Value('bad'))
         return Response(status=CodeResult.Value('bad'))
 
 

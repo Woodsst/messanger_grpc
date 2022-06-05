@@ -16,7 +16,7 @@ config = Settings()
 def server_start():
     config.config_for_tests()
     os.popen('sh server_start.sh')
-    time.sleep(0.3)
+    time.sleep(0.4)
     yield
     config.reset_default_config()
     terminate_server()

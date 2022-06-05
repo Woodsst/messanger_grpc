@@ -3,11 +3,11 @@ syntax = "proto3";
 service Greeter {
   rpc InformationRequest (RequestSelfInfo) returns (ClientInfo) {}
   rpc SendMessage (Message) returns (Response) {}
-  rpc AddFriend (FriendRequest) returns (Response) {}
-  rpc DeleteFriend (DeleteFriendRequest) returns (Response) {}
+  rpc AddFriend (AddFriendRequest) returns (Response) {}
+  rpc RemoveFriend (RemoveFriendRequest) returns (Response) {}
   rpc CreateRoom (CreateRoomRequest) returns (Response) {}
-  rpc EnterRoom (EnterRoomRequest) returns (stream RoomUpdate) {}
-  rpc EscapeOutRoom(EscapeRoom) returns (Response) {}
+  rpc JoinRoom (JoinRoomRequest) returns (Response) {}
+  rpc RoomEscape(EscapeRoomRequest) returns (Response) {}
 }
 
 enum CodeResult {
@@ -41,12 +41,12 @@ message Message {
   string credentials = 4;
 }
 
-message FriendRequest {
+message AddFriendRequest {
   string friend = 1;
   string credentials = 2;
 }
 
-message DeleteFriendRequest {
+message RemoveFriendRequest {
   string friend = 1;
   string credentials = 2;
 }
@@ -56,13 +56,13 @@ message CreateRoomRequest {
   string credentials = 2;
 }
 
-message EnterRoomRequest {
+message JoinRoomRequest {
   string room = 1;
   string credentials = 2;
 
 }
 
-message EscapeRoom {
+message EscapeRoomRequest {
   string room = 1;
   string credentials = 2;
 }

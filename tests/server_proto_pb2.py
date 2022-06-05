@@ -15,11 +15,11 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12server_proto.proto\"<\n\nClientInfo\x12\x1b\n\x06status\x18\x01 \x01(\x0e\x32\x0b.CodeResult\x12\x11\n\tjson_info\x18\x02 \x01(\t\"&\n\x0fRequestSelfInfo\x12\x13\n\x0b\x63redentials\x18\x01 \x01(\t\"\'\n\x08Response\x12\x1b\n\x06status\x18\x01 \x01(\x0e\x32\x0b.CodeResult\">\n\nRoomUpdate\x12\x1b\n\x06status\x18\x01 \x01(\x0e\x32\x0b.CodeResult\x12\x13\n\x0bnew_message\x18\x02 \x01(\t\"X\n\x07Message\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x11\n\troom_name\x18\x02 \x01(\t\x12\x14\n\x0cother_client\x18\x03 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x04 \x01(\t\"4\n\rFriendRequest\x12\x0e\n\x06\x66riend\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\":\n\x13\x44\x65leteFriendRequest\x12\x0e\n\x06\x66riend\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"6\n\x11\x43reateRoomRequest\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"5\n\x10\x45nterRoomRequest\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"/\n\nEscapeRoom\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t**\n\nCodeResult\x12\x0b\n\x07unknown\x10\x00\x12\x06\n\x02ok\x10\x01\x12\x07\n\x03\x62\x61\x64\x10\x02\x32\xce\x02\n\x07Greeter\x12\x35\n\x12InformationRequest\x12\x10.RequestSelfInfo\x1a\x0b.ClientInfo\"\x00\x12$\n\x0bSendMessage\x12\x08.Message\x1a\t.Response\"\x00\x12(\n\tAddFriend\x12\x0e.FriendRequest\x1a\t.Response\"\x00\x12\x31\n\x0c\x44\x65leteFriend\x12\x14.DeleteFriendRequest\x1a\t.Response\"\x00\x12-\n\nCreateRoom\x12\x12.CreateRoomRequest\x1a\t.Response\"\x00\x12/\n\tEnterRoom\x12\x11.EnterRoomRequest\x1a\x0b.RoomUpdate\"\x00\x30\x01\x12)\n\rEscapeOutRoom\x12\x0b.EscapeRoom\x1a\t.Response\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12server_proto.proto\"<\n\nClientInfo\x12\x1b\n\x06status\x18\x01 \x01(\x0e\x32\x0b.CodeResult\x12\x11\n\tjson_info\x18\x02 \x01(\t\"&\n\x0fRequestSelfInfo\x12\x13\n\x0b\x63redentials\x18\x01 \x01(\t\"\'\n\x08Response\x12\x1b\n\x06status\x18\x01 \x01(\x0e\x32\x0b.CodeResult\">\n\nRoomUpdate\x12\x1b\n\x06status\x18\x01 \x01(\x0e\x32\x0b.CodeResult\x12\x13\n\x0bnew_message\x18\x02 \x01(\t\"X\n\x07Message\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x11\n\troom_name\x18\x02 \x01(\t\x12\x14\n\x0cother_client\x18\x03 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x04 \x01(\t\"7\n\x10\x41\x64\x64\x46riendRequest\x12\x0e\n\x06\x66riend\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\":\n\x13RemoveFriendRequest\x12\x0e\n\x06\x66riend\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"6\n\x11\x43reateRoomRequest\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"4\n\x0fJoinRoomRequest\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"6\n\x11\x45scapeRoomRequest\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t*1\n\nCodeResult\x12\x12\n\x0eunknown_format\x10\x00\x12\x06\n\x02ok\x10\x01\x12\x07\n\x03\x62\x61\x64\x10\x02\x32\xcf\x02\n\x07Greeter\x12\x35\n\x12InformationRequest\x12\x10.RequestSelfInfo\x1a\x0b.ClientInfo\"\x00\x12$\n\x0bSendMessage\x12\x08.Message\x1a\t.Response\"\x00\x12+\n\tAddFriend\x12\x11.AddFriendRequest\x1a\t.Response\"\x00\x12\x31\n\x0cRemoveFriend\x12\x14.RemoveFriendRequest\x1a\t.Response\"\x00\x12-\n\nCreateRoom\x12\x12.CreateRoomRequest\x1a\t.Response\"\x00\x12)\n\x08JoinRoom\x12\x10.JoinRoomRequest\x1a\t.Response\"\x00\x12-\n\nRoomEscape\x12\x12.EscapeRoomRequest\x1a\t.Response\"\x00\x62\x06proto3')
 
 _CODERESULT = DESCRIPTOR.enum_types_by_name['CodeResult']
 CodeResult = enum_type_wrapper.EnumTypeWrapper(_CODERESULT)
-unknown = 0
+unknown_format = 0
 ok = 1
 bad = 2
 
@@ -29,11 +29,11 @@ _REQUESTSELFINFO = DESCRIPTOR.message_types_by_name['RequestSelfInfo']
 _RESPONSE = DESCRIPTOR.message_types_by_name['Response']
 _ROOMUPDATE = DESCRIPTOR.message_types_by_name['RoomUpdate']
 _MESSAGE = DESCRIPTOR.message_types_by_name['Message']
-_FRIENDREQUEST = DESCRIPTOR.message_types_by_name['FriendRequest']
-_DELETEFRIENDREQUEST = DESCRIPTOR.message_types_by_name['DeleteFriendRequest']
+_ADDFRIENDREQUEST = DESCRIPTOR.message_types_by_name['AddFriendRequest']
+_REMOVEFRIENDREQUEST = DESCRIPTOR.message_types_by_name['RemoveFriendRequest']
 _CREATEROOMREQUEST = DESCRIPTOR.message_types_by_name['CreateRoomRequest']
-_ENTERROOMREQUEST = DESCRIPTOR.message_types_by_name['EnterRoomRequest']
-_ESCAPEROOM = DESCRIPTOR.message_types_by_name['EscapeRoom']
+_JOINROOMREQUEST = DESCRIPTOR.message_types_by_name['JoinRoomRequest']
+_ESCAPEROOMREQUEST = DESCRIPTOR.message_types_by_name['EscapeRoomRequest']
 ClientInfo = _reflection.GeneratedProtocolMessageType('ClientInfo', (_message.Message,), {
   'DESCRIPTOR' : _CLIENTINFO,
   '__module__' : 'server_proto_pb2'
@@ -69,19 +69,19 @@ Message = _reflection.GeneratedProtocolMessageType('Message', (_message.Message,
   })
 _sym_db.RegisterMessage(Message)
 
-FriendRequest = _reflection.GeneratedProtocolMessageType('FriendRequest', (_message.Message,), {
-  'DESCRIPTOR' : _FRIENDREQUEST,
+AddFriendRequest = _reflection.GeneratedProtocolMessageType('AddFriendRequest', (_message.Message,), {
+  'DESCRIPTOR' : _ADDFRIENDREQUEST,
   '__module__' : 'server_proto_pb2'
-  # @@protoc_insertion_point(class_scope:FriendRequest)
+  # @@protoc_insertion_point(class_scope:AddFriendRequest)
   })
-_sym_db.RegisterMessage(FriendRequest)
+_sym_db.RegisterMessage(AddFriendRequest)
 
-DeleteFriendRequest = _reflection.GeneratedProtocolMessageType('DeleteFriendRequest', (_message.Message,), {
-  'DESCRIPTOR' : _DELETEFRIENDREQUEST,
+RemoveFriendRequest = _reflection.GeneratedProtocolMessageType('RemoveFriendRequest', (_message.Message,), {
+  'DESCRIPTOR' : _REMOVEFRIENDREQUEST,
   '__module__' : 'server_proto_pb2'
-  # @@protoc_insertion_point(class_scope:DeleteFriendRequest)
+  # @@protoc_insertion_point(class_scope:RemoveFriendRequest)
   })
-_sym_db.RegisterMessage(DeleteFriendRequest)
+_sym_db.RegisterMessage(RemoveFriendRequest)
 
 CreateRoomRequest = _reflection.GeneratedProtocolMessageType('CreateRoomRequest', (_message.Message,), {
   'DESCRIPTOR' : _CREATEROOMREQUEST,
@@ -90,26 +90,26 @@ CreateRoomRequest = _reflection.GeneratedProtocolMessageType('CreateRoomRequest'
   })
 _sym_db.RegisterMessage(CreateRoomRequest)
 
-EnterRoomRequest = _reflection.GeneratedProtocolMessageType('EnterRoomRequest', (_message.Message,), {
-  'DESCRIPTOR' : _ENTERROOMREQUEST,
+JoinRoomRequest = _reflection.GeneratedProtocolMessageType('JoinRoomRequest', (_message.Message,), {
+  'DESCRIPTOR' : _JOINROOMREQUEST,
   '__module__' : 'server_proto_pb2'
-  # @@protoc_insertion_point(class_scope:EnterRoomRequest)
+  # @@protoc_insertion_point(class_scope:JoinRoomRequest)
   })
-_sym_db.RegisterMessage(EnterRoomRequest)
+_sym_db.RegisterMessage(JoinRoomRequest)
 
-EscapeRoom = _reflection.GeneratedProtocolMessageType('EscapeRoom', (_message.Message,), {
-  'DESCRIPTOR' : _ESCAPEROOM,
+EscapeRoomRequest = _reflection.GeneratedProtocolMessageType('EscapeRoomRequest', (_message.Message,), {
+  'DESCRIPTOR' : _ESCAPEROOMREQUEST,
   '__module__' : 'server_proto_pb2'
-  # @@protoc_insertion_point(class_scope:EscapeRoom)
+  # @@protoc_insertion_point(class_scope:EscapeRoomRequest)
   })
-_sym_db.RegisterMessage(EscapeRoom)
+_sym_db.RegisterMessage(EscapeRoomRequest)
 
 _GREETER = DESCRIPTOR.services_by_name['Greeter']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _CODERESULT._serialized_start=593
-  _CODERESULT._serialized_end=635
+  _CODERESULT._serialized_start=602
+  _CODERESULT._serialized_end=651
   _CLIENTINFO._serialized_start=22
   _CLIENTINFO._serialized_end=82
   _REQUESTSELFINFO._serialized_start=84
@@ -120,16 +120,16 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _ROOMUPDATE._serialized_end=227
   _MESSAGE._serialized_start=229
   _MESSAGE._serialized_end=317
-  _FRIENDREQUEST._serialized_start=319
-  _FRIENDREQUEST._serialized_end=371
-  _DELETEFRIENDREQUEST._serialized_start=373
-  _DELETEFRIENDREQUEST._serialized_end=431
-  _CREATEROOMREQUEST._serialized_start=433
-  _CREATEROOMREQUEST._serialized_end=487
-  _ENTERROOMREQUEST._serialized_start=489
-  _ENTERROOMREQUEST._serialized_end=542
-  _ESCAPEROOM._serialized_start=544
-  _ESCAPEROOM._serialized_end=591
-  _GREETER._serialized_start=638
-  _GREETER._serialized_end=972
+  _ADDFRIENDREQUEST._serialized_start=319
+  _ADDFRIENDREQUEST._serialized_end=374
+  _REMOVEFRIENDREQUEST._serialized_start=376
+  _REMOVEFRIENDREQUEST._serialized_end=434
+  _CREATEROOMREQUEST._serialized_start=436
+  _CREATEROOMREQUEST._serialized_end=490
+  _JOINROOMREQUEST._serialized_start=492
+  _JOINROOMREQUEST._serialized_end=544
+  _ESCAPEROOMREQUEST._serialized_start=546
+  _ESCAPEROOMREQUEST._serialized_end=600
+  _GREETER._serialized_start=654
+  _GREETER._serialized_end=989
 # @@protoc_insertion_point(module_scope)

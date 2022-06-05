@@ -52,23 +52,40 @@ class Orm:
         self.conn.commit()
         return information
 
-    async def add_new_room(self, room_name: str, creator: str):
-        room_name = f'r_{room_name}'
+    async def create_log_for_room(self, room: str):
         self.cursor.execute(sql.SQL("""
-        CREATE TABLE IF NOT EXISTS {}
-        (
-        creator varchar,
-        member varchar NOT null,
-        message varchar NOT null,
-        message_time date NOT null
-        )
-        """).format(sql.Identifier(room_name)))
+        CREATE TABLE {}
+            (
+            member varchar NOT null,
+            message varchar
+            message_time date NOT null
+            )
+        """).format(sql.Identifier(room)))
         self.conn.commit()
+
+    async def add_new_room(self, room_name: str, creator: str):
+        try:
+            self.cursor.execute(sql.SQL("""
+            CREATE TABLE {}
+            (
+            creator varchar,
+            member varchar NOT null,
+            connection_time date NOT null
+            )
+            """).format(sql.Identifier(room_name)))
+        except psycopg.errors.DuplicateTable:
+            self.conn.commit()
+            return False
+        self.conn.commit()
+        await self.add_creator_in_room(room_name, creator)
+        await self.create_log_for_room(room_name)
+
+    async def add_creator_in_room(self, room_name: str, creator: str):
         self.cursor.execute(sql.SQL("""
-        INSERT INTO {} (creator, message_time, member, message)
-        VALUES (%s, %s, %s, 'room created')
+        INSERT INTO {} (creator, member, connection_time)
+        VALUES (%s, %s, %s)
         """).format(sql.Identifier(room_name)),
-                            (creator, datetime.datetime.now(), creator))
+                            (creator, creator, datetime.datetime.now()))
         self.conn.commit()
 
     async def add_friend(self, user_name: str, friend_name: str) -> bool:
@@ -94,8 +111,7 @@ class Orm:
             "friend_name": friend_name,
             "username": user_name
         })
-        result = self.cursor.fetchone()
-        if result[0] is None:
+        if self.cursor.fetchone()[0] is None:
             return False
         return True
 
@@ -131,6 +147,51 @@ class Orm:
         elif await self.check_friend_in_friend_list(friend_name, user_name):
             return False
         return True
+
+    async def join_room(self, username: str, room: str) -> bool:
+        if await self.room_exist(room):
+            self.cursor.execute(sql.SQL("""
+            INSERT INTO {} (member, connection_time)
+            VALUES (%s, %s)
+            """).format(sql.Identifier(room)), (username, datetime.datetime.now()))
+            self.conn.commit()
+            return True
+        return False
+
+    async def room_escape(self, username: str, room: str) -> bool:
+        if self.room_exist(room):
+            self.cursor.execute(sql.SQL("""
+            DELETE FROM {}
+            WHERE member = %s
+            """).format(sql.Identifier(room)), (username,))
+            self.conn.commit()
+            await self.delete_room_from_room_list(username, room)
+            return True
+        self.conn.commit()
+        return False
+
+    async def delete_room_from_room_list(self, username: str, room: str):
+        self.cursor.execute("""
+        UPDATE clients
+        SET room_list = array_remove(room_list, %(room)s)
+        WHERE username = %(username)s
+        """, {"room": room,
+              "username": username})
+        self.conn.commit()
+
+    async def room_exist(self, room):
+        self.cursor.execute("""
+        SELECT EXISTS (
+            SELECT FROM 
+                pg_tables
+            WHERE 
+                schemaname = 'public' AND 
+                tablename  = %s
+            )
+        """, (room,))
+        if self.cursor.fetchone()[0] is True:
+            return True
+        return False
 
     @staticmethod
     def data_to_dict(data: tuple) -> dict:

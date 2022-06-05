@@ -1,5 +1,4 @@
 from server.orm import Orm
-from server.room import Room
 
 
 class Client:
@@ -31,13 +30,16 @@ class Client:
             return True
         return False
 
-    def connect_room(self, room: Room):
+    async def join_room(self, room: str):
         """
         Connection to existing room
         :param room: class Room
         :return:
         """
-        pass
+        room = f'r_{room}'
+        if await self.orm.join_room(self.name, room):
+            return True
+        return False
 
     async def create_room(self, room_name: str):
         """
@@ -45,7 +47,10 @@ class Client:
         :param room_name: uniq room name
         :return:
         """
-        await self.orm.add_new_room(room_name, self.name)
+        room_name = f'r_{room_name}'
+        if await self.orm.add_new_room(room_name, self.name):
+            return True
+        return False
 
     def send_message(self, message: str, room_name: str = None, other_client=None):
         """
@@ -64,5 +69,16 @@ class Client:
         :return: bool
         """
         if await self.orm.remove_friend(friend_name, self.name):
+            return True
+        return False
+
+    async def room_escape(self, room: str) -> bool:
+        """
+        unjoin room
+        :param room: string
+        :return: bool
+        """
+        room = f'r_{room}'
+        if await self.orm.room_escape(room, self.name):
             return True
         return False
