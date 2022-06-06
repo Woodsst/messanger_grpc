@@ -16,7 +16,7 @@ config = Settings()
 def server_start():
     config.config_for_tests()
     os.popen('sh server_start.sh')
-    time.sleep(0.4)
+    time.sleep(0.5)
     yield
     config.reset_default_config()
     terminate_server()
@@ -27,7 +27,7 @@ def orm():
     orm = Orm(config)
     orm.create_test_clients()
     yield orm
-    orm.delete_test_client()
+    orm.clearing_database()
 
 
 @pytest.fixture(scope='function')

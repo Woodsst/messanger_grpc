@@ -14,3 +14,7 @@ def test_create_room_error(send_message, orm):
         CreateRoomRequest(room=ROOM, credentials=BAD_TOKEN)
     )
     assert response.status == 2
+    response = send_message.CreateRoom(
+        CreateRoomRequest(room='', credentials=TOKEN)
+    )
+    assert response.status == 2

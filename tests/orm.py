@@ -27,6 +27,17 @@ class Orm:
         """)
         self.conn.commit()
 
+    def clearing_database(self):
+        self.delete_test_client()
+        self.delete_test_room()
+
+    def delete_test_room(self):
+        self.cursor.execute("""
+        DROP TABLE IF EXISTS log_r_test_room;
+        DROP TABLE IF EXISTS r_test_room;
+        """)
+        self.conn.commit()
+
     def client_add(self, username: str, passwd: str, friend_list: set, room_list: set):
         friend_list = ''.join(x for x in str(friend_list) if x != "'")
         room_list = ''.join(x for x in str(room_list) if x != "'")

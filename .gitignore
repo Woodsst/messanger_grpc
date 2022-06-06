@@ -5,3 +5,4 @@ ex.py
 tests/.pytest_cache
 server/__pycache__
 tests/__pycache__
+/tests/.coverage

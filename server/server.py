@@ -40,8 +40,8 @@ class Greeter(GreeterServicer):
         info = await get_client_info(request.credentials, self.orm)
         if info:
             client = Client(info['username'], self.orm)
-            await client.create_room(request.room)
-            return Response(status=CodeResult.Value('ok'))
+            if await client.create_room(request.room):
+                return Response(status=CodeResult.Value('ok'))
         return Response(status=CodeResult.Value('bad'))
 
     async def JoinRoom(self, request, context):
@@ -56,7 +56,7 @@ class Greeter(GreeterServicer):
         info = await get_client_info(request.credentials, self.orm)
         if info:
             client = Client(info['username'], self.orm)
-            if await client.room_escape(request.friend):
+            if await client.room_escape(request.room):
                 return Response(status=CodeResult.Value('ok'))
         return Response(status=CodeResult.Value('bad'))
 

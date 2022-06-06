@@ -53,11 +53,12 @@ class Orm:
         return information
 
     async def create_log_for_room(self, room: str):
+        room = f'log_{room}'
         self.cursor.execute(sql.SQL("""
         CREATE TABLE {}
             (
             member varchar NOT null,
-            message varchar
+            message varchar,
             message_time date NOT null
             )
         """).format(sql.Identifier(room)))
@@ -79,6 +80,7 @@ class Orm:
         self.conn.commit()
         await self.add_creator_in_room(room_name, creator)
         await self.create_log_for_room(room_name)
+        return True
 
     async def add_creator_in_room(self, room_name: str, creator: str):
         self.cursor.execute(sql.SQL("""
@@ -159,7 +161,7 @@ class Orm:
         return False
 
     async def room_escape(self, username: str, room: str) -> bool:
-        if self.room_exist(room):
+        if await self.room_exist(room):
             self.cursor.execute(sql.SQL("""
             DELETE FROM {}
             WHERE member = %s

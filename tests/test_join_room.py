@@ -1,8 +1,11 @@
 from client_data_for_tests import TOKEN, BAD_TOKEN, ROOM, BAD_ROOM
-from server_proto_pb2 import JoinRoomRequest, Response
+from server_proto_pb2 import JoinRoomRequest, Response, CreateRoomRequest
 
 
 def test_join_room(send_message, orm):
+    send_message.CreateRoom(
+        CreateRoomRequest(credentials=TOKEN, room=ROOM)
+    )
     response = send_message.JoinRoom(
         JoinRoomRequest(credentials=TOKEN, room=ROOM)
     )
