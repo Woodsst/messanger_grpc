@@ -38,6 +38,34 @@ class Orm:
             connect = True
         return conn
 
+    async def message_in_room(self, message: str, addressee: str, user: str):
+        if await self.room_exist(addressee) and await self.check_room_in_room_list(user, addressee):
+            addressee = f'log_{addressee}'
+            self.cursor.execute(sql.SQL("""
+            INSERT INTO {} (member, message, message_time)
+            VALUES (%(member)s, %(message)s, %(message_time)s)
+            """).format(sql.Identifier(addressee)),
+                                {"member": user,
+                                 "message": message,
+                                 "message_time": datetime.datetime.now()})
+            self.conn.commit()
+            return True
+        return False
+
+    async def check_room_in_room_list(self, username: str, room_name: str) -> bool:
+        self.cursor.execute("""
+        SELECT array_position(room_list, %(room_name)s)
+        FROM clients
+        WHERE username=%(username)s
+        """, {"room_name": room_name,
+              "username": username})
+        if self.cursor.fetchone()[0] is None:
+            return False
+        return True
+
+    async def message_for_friend(self, message: str, addressee: str, user: str):
+        pass
+
     async def get_client_information(self, name: str) -> dict or bool:
         self.cursor.execute("""
         SELECT username, friend_list, room_list

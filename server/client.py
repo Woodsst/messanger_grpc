@@ -7,8 +7,15 @@ class Client:
         self.name = name
         self.orm = orm
 
-    def send_message(self, message: str, room_name: str = None, other_client=None):
-        pass
+    async def send_message(self, message: str, addressee: str) -> Response:
+        if addressee[:2] == 'r_':
+            if await self.orm.message_in_room(message, addressee, self.name):
+                return Response(status=CodeResult.Value('ok'))
+            return Response(status=CodeResult.Value('bad'))
+
+        if await self.orm.message_for_friend(message, addressee, self.name):
+            return Response(status=CodeResult.Value('ok'))
+        return Response(status=CodeResult.Value('bad'))
 
     async def add_friend(self, friend_name: str) -> Response:
         if await self.orm.add_friend(self.name, friend_name):
@@ -21,7 +28,7 @@ class Client:
             return Response(status=CodeResult.Value('ok'))
         return Response(status=CodeResult.Value('bad'))
 
-    async def create_room(self, room_name: str) -> bool:
+    async def create_room(self, room_name: str) -> Response:
         if len(room_name) <= 0:
             return Response(status=CodeResult.Value('bad'))
 
@@ -30,12 +37,12 @@ class Client:
             return Response(status=CodeResult.Value('ok'))
         return Response(status=CodeResult.Value('bad'))
 
-    async def remove_friend(self, friend_name: str) -> bool:
+    async def remove_friend(self, friend_name: str) -> Response:
         if await self.orm.remove_friend(friend_name, self.name):
             return Response(status=CodeResult.Value('ok'))
         return Response(status=CodeResult.Value('bad'))
 
-    async def room_escape(self, room: str) -> bool:
+    async def room_escape(self, room: str) -> Response:
         room = f'r_{room}'
         if await self.orm.room_escape(self.name, room):
             return Response(status=CodeResult.Value('ok'))

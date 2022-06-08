@@ -25,6 +25,9 @@ class RequestHandler:
         if client is False:
             return api.Response(status=api.CodeResult.Value('bad'))
 
+        if request_type == Requests.SEND_MESSAGE:
+            return await client.send_message(request.message, request.addressee)
+
         requests = {
             Requests.CREATE_ROOM: client.create_room,
             Requests.ADD_FRIEND: client.add_friend,

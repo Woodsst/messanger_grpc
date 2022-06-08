@@ -3,7 +3,6 @@ import logging
 
 import grpc
 
-from server.client import Client
 from server.credentials import get_client_info
 from server.handler import RequestHandler, Requests
 from server.orm import Orm
@@ -19,17 +18,7 @@ class Greeter(GreeterServicer):
         self.handler = RequestHandler(self.orm)
 
     async def SendMessage(self, request, context) -> Response:
-        info = await get_client_info(request.credentials, self.orm)
-        if info:
-            client = Client(info['username'])
-            if request.room_name:
-                client.send_message(message=request.message,
-                                    room_name=request.room_name)
-            elif request.other_client:
-                client.send_message(message=request.message,
-                                    other_client=request.other_client)
-            return Response(status=CodeResult.Value('ok'))
-        return Response(status=CodeResult.Value('bad'))
+        return await self.handler.handle(request, Requests.SEND_MESSAGE)
 
     async def InformationRequest(self, request, context) -> ClientInfo:
         info = await get_client_info(request.credentials, self.orm)

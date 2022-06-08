@@ -12,7 +12,7 @@ def test_get_client_info(send_message, orm):
     assert len(response) == 3
     assert response['username'] == USER
     assert len(response['friend_list']) == 2
-    assert len(response['room_list']) == 2
+    assert len(response['room_list']) == 3
 
 
 def test_get_client_info_bad_request(send_message):

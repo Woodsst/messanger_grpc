@@ -36,9 +36,8 @@ message RoomUpdate {
 
 message Message {
   string message = 1;
-  string room_name = 2;
-  string other_client = 3;
-  string credentials = 4;
+  string addressee = 2;
+  string credentials = 3;
 }
 
 message AddFriendRequest {

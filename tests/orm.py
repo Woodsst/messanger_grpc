@@ -35,6 +35,8 @@ class Orm:
         self.cursor.execute("""
         DROP TABLE IF EXISTS log_r_test_room;
         DROP TABLE IF EXISTS r_test_room;
+        DROP TABLE IF EXISTS r_test_room_1;
+        DROP TABLE IF EXISTS log_r_test_room_1;
         """)
         self.conn.commit()
 
@@ -55,6 +57,7 @@ class Orm:
         self.conn.commit()
 
     def create_test_clients(self):
-        self.client_add('test_user', 'asd1', {'test_user_1', 'test_user_2'}, {'r_test_room_1', 'r_test_room_2'})
+        self.client_add('test_user', 'asd1', {'test_user_1', 'test_user_2'},
+                        {'r_test_room_1', 'r_test_room_2', 'r_test_room_3'})
         self.client_add('test_user_2', 'asasdd1', {'test_user_1', 'test_user_2'}, {'r_test_room_1', 'r_test_room_2'})
         self.client_add('test_user_3', 'asasdd1', {'test_user_0'}, {'r_test_room_0'})
