@@ -5,6 +5,7 @@ import grpc
 
 from server.client import Client
 from server.credentials import get_client_info
+from server.handler import RequestHandler, Requests
 from server.orm import Orm
 from server.server_proto_pb2 import ClientInfo, CodeResult, Response
 from server.server_proto_pb2_grpc import add_GreeterServicer_to_server, GreeterServicer
@@ -15,6 +16,7 @@ logger = logging.getLogger()
 class Greeter(GreeterServicer):
     def __init__(self, orm: Orm):
         self.orm = orm
+        self.handler = RequestHandler(self.orm)
 
     async def SendMessage(self, request, context) -> Response:
         info = await get_client_info(request.credentials, self.orm)
@@ -37,44 +39,19 @@ class Greeter(GreeterServicer):
         return ClientInfo(status=CodeResult.Value('bad'))
 
     async def CreateRoom(self, request, context) -> Response:
-        info = await get_client_info(request.credentials, self.orm)
-        if info:
-            client = Client(info['username'], self.orm)
-            if await client.create_room(request.room):
-                return Response(status=CodeResult.Value('ok'))
-        return Response(status=CodeResult.Value('bad'))
+        return await self.handler.handle(request, Requests.CREATE_ROOM)
 
     async def JoinRoom(self, request, context):
-        info = await get_client_info(request.credentials, self.orm)
-        if info:
-            client = Client(info['username'], self.orm)
-            if await client.join_room(request.room):
-                return Response(status=CodeResult.Value('ok'))
-        return Response(status=CodeResult.Value('bad'))
+        return await self.handler.handle(request, Requests.JOIN_ROOM)
 
     async def RoomEscape(self, request, context):
-        info = await get_client_info(request.credentials, self.orm)
-        if info:
-            client = Client(info['username'], self.orm)
-            if await client.room_escape(request.room):
-                return Response(status=CodeResult.Value('ok'))
-        return Response(status=CodeResult.Value('bad'))
+        return await self.handler.handle(request, Requests.ROOM_ESCAPE)
 
     async def AddFriend(self, request, context) -> Response:
-        info = await get_client_info(request.credentials, self.orm)
-        if info:
-            client = Client(info['username'], self.orm)
-            if await client.add_friend(request.friend):
-                return Response(status=CodeResult.Value('ok'))
-        return Response(status=CodeResult.Value('bad'))
+        return await self.handler.handle(request, Requests.ADD_FRIEND)
 
     async def RemoveFriend(self, request, context) -> Response:
-        info = await get_client_info(request.credentials, self.orm)
-        if info:
-            client = Client(info['username'], self.orm)
-            if await client.remove_friend(request.friend):
-                return Response(status=CodeResult.Value('ok'))
-        return Response(status=CodeResult.Value('bad'))
+        return await self.handler.handle(request, Requests.REMOVE_FRIEND)
 
 
 async def server_run(orm: Orm):
