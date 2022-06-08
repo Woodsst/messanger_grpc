@@ -38,7 +38,7 @@ class Orm:
             connect = True
         return conn
 
-    async def message_in_room(self, message: str, addressee: str, user: str):
+    async def message_in_room(self, message: str, addressee: str, user: str) -> bool:
         if await self.room_exist(addressee) and await self.check_room_in_room_list(user, addressee):
             addressee = f'log_{addressee}'
             self.cursor.execute(sql.SQL("""
@@ -63,8 +63,37 @@ class Orm:
             return False
         return True
 
-    async def message_for_friend(self, message: str, addressee: str, user: str):
-        pass
+    async def message_for_friend(self, message: str, addressee: str, username: str) -> bool:
+        if await self.check_friend_in_friend_list(addressee, username):
+            log_name = await self.create_log_friend_chat(addressee, username)
+            self.cursor.execute(sql.SQL("""
+            INSERT INTO {} (member, message, message_time)
+            VALUES (%(member)s, %(message)s, %(message_time)s)
+            """).format(sql.Identifier(log_name)),
+                                {"member": username,
+                                 "message": message,
+                                 "message_time": datetime.datetime.now()
+                                 })
+            self.conn.commit()
+            return True
+        return False
+
+    async def check_friend_log_exist(self, addressee: str, username: str) -> str or bool:
+        first = f'log_{addressee}_{username}'
+        second = f'log_{username}_{addressee}'
+        if await self.room_exist(first):
+            return first
+        if await self.room_exist(second):
+            return second
+        return False
+
+    async def create_log_friend_chat(self, addressee: str, username: str) -> str:
+        log_name = await self.check_friend_log_exist(addressee, username)
+        if log_name is False:
+            log_name = f'{addressee}_{username}'
+            await self.create_log_for_room(log_name)
+            return f'log_{log_name}'
+        return log_name
 
     async def get_client_information(self, name: str) -> dict or bool:
         self.cursor.execute("""
@@ -83,7 +112,7 @@ class Orm:
     async def create_log_for_room(self, room: str):
         room = f'log_{room}'
         self.cursor.execute(sql.SQL("""
-        CREATE TABLE {}
+        CREATE TABLE IF NOT EXISTS {}
             (
             member varchar NOT null,
             message varchar,
@@ -92,7 +121,7 @@ class Orm:
         """).format(sql.Identifier(room)))
         self.conn.commit()
 
-    async def add_new_room(self, room_name: str, creator: str):
+    async def add_new_room(self, room_name: str, creator: str) -> bool:
         try:
             self.cursor.execute(sql.SQL("""
             CREATE TABLE {}

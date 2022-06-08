@@ -20,7 +20,6 @@ def jwt_encoder(username: str) -> bytes:
     return _token
 
 
+TOKEN_USER_2 = jwt_encoder(USER_2)
 TOKEN = jwt_encoder(USER)
 BAD_TOKEN = jwt_encoder('wrong_username')
-
-
