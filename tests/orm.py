@@ -1,6 +1,8 @@
 import datetime
+import time
 
 import psycopg
+from psycopg import sql
 
 from config import Settings
 
@@ -50,7 +52,7 @@ class Orm:
         """, {
             "username": username,
             "passwd": passwd,
-            "registration_date": datetime.datetime.now(),
+            "registration_date": int(time.time()),
             "friend_list": str(friend_list),
             "room_list": str(room_list)
         }
@@ -64,3 +66,21 @@ class Orm:
                         {'r_test_room_1', 'r_test_room_2'})
         self.client_add('test_user_3', 'asasdd1',
                         {'test_user_0'}, {'r_test_room_0'})
+
+    def write_message_in_log(self, log: str, username: str, message: str, message_time: int):
+        self.cursor.execute(sql.SQL("""
+        INSERT INTO {} (member, message, message_time)
+        VALUES (%s, %s, %s)
+        """).format(sql.Identifier(log)),
+                            (username, message, message_time))
+        self.conn.commit()
+
+    def create_messages_in_room(self):
+        self.write_message_in_log('log_r_test_room_1', 'test_user_1',
+                                  'Hello_1', 1655103816)
+        self.write_message_in_log('log_r_test_room_1', 'test_user_1',
+                                  'Hello_2', 1655103817)
+        self.write_message_in_log('log_r_test_room_1', 'test_user_1',
+                                  'Hello_3', 1655103818)
+        self.write_message_in_log('log_r_test_room_1', 'test_user_1',
+                                  'Hello_4', 1655103819)

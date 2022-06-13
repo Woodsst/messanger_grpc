@@ -1,5 +1,7 @@
+import json
+
 from server.orm import Orm
-from server.server_proto_pb2 import Response, CodeResult
+from server.server_proto_pb2 import Response, CodeResult, ClientInfo
 
 
 class Client:
@@ -47,3 +49,15 @@ class Client:
         if await self.orm.room_escape(self.name, room):
             return Response(status=CodeResult.Value('ok'))
         return Response(status=CodeResult.Value('bad'))
+
+    async def get_messages_update(self, time: int) -> dict:
+        info = await self.orm.get_client_information(self.name)
+        info = json.loads(info)
+        friends_update = await self.orm.update_friend_logs(self.name, info['friend_list'], time)
+        rooms_update = await self.orm.update_room_logs(info['room_list'], time)
+        updates = {"friends_update": friends_update,
+                   "rooms_update": rooms_update,
+                   "info": info}
+        return ClientInfo(status=CodeResult.Value('ok'),
+                          json_info=json.dumps(updates))
+

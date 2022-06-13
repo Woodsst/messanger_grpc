@@ -38,8 +38,39 @@ class Orm:
             connect = True
         return conn
 
+    async def update_friend_logs(self, username: str, friend_list: list, update_time: int) -> dict:
+        update_friend_messages = {}
+        for friend in friend_list:
+            log = await self.check_friend_log_exist(friend, username)
+            if log:
+                update = await self.check_update_in_log(log, update_time)
+                if update is not False:
+                    update_friend_messages[friend] = update
+        return update_friend_messages
+
+    async def update_room_logs(self, room_list: list, update_time: int) -> dict:
+        update_room_messages = {}
+        for room in room_list:
+            room = f'log_{room}'
+            if await self.table_exist(room):
+                update = await self.check_update_in_log(room, update_time)
+                update_room_messages[room] = update
+        return update_room_messages
+
+    async def check_update_in_log(self, log_name: str, update_time: int):
+        self.cursor.execute(sql.SQL("""
+        SELECT * 
+        FROM {}
+        WHERE message_time > %s
+        """).format(sql.Identifier(log_name)), (update_time,))
+        result = self.cursor.fetchall()
+        self.conn.commit()
+        if len(result) > 0:
+            return result
+        return False
+
     async def message_in_room(self, message: str, addressee: str, user: str) -> bool:
-        if await self.room_exist(addressee) and await self.check_room_in_room_list(user, addressee):
+        if await self.table_exist(addressee) and await self.check_room_in_room_list(user, addressee):
             addressee = f'log_{addressee}'
             self.cursor.execute(sql.SQL("""
             INSERT INTO {} (member, message, message_time)
@@ -47,7 +78,7 @@ class Orm:
             """).format(sql.Identifier(addressee)),
                                 {"member": user,
                                  "message": message,
-                                 "message_time": datetime.datetime.now()})
+                                 "message_time": int(time.time())})
             self.conn.commit()
             return True
         return False
@@ -72,7 +103,7 @@ class Orm:
             """).format(sql.Identifier(log_name)),
                                 {"member": username,
                                  "message": message,
-                                 "message_time": datetime.datetime.now()
+                                 "message_time": int(time.time())
                                  })
             self.conn.commit()
             return True
@@ -81,9 +112,9 @@ class Orm:
     async def check_friend_log_exist(self, addressee: str, username: str) -> str or bool:
         first = f'log_{addressee}_{username}'
         second = f'log_{username}_{addressee}'
-        if await self.room_exist(first):
+        if await self.table_exist(first):
             return first
-        if await self.room_exist(second):
+        if await self.table_exist(second):
             return second
         return False
 
@@ -116,7 +147,7 @@ class Orm:
             (
             member varchar NOT null,
             message varchar,
-            message_time date NOT null
+            message_time int NOT null
             )
         """).format(sql.Identifier(room)))
         self.conn.commit()
@@ -208,7 +239,7 @@ class Orm:
         return True
 
     async def join_room(self, username: str, room: str) -> bool:
-        if await self.room_exist(room):
+        if await self.table_exist(room):
             self.cursor.execute(sql.SQL("""
             INSERT INTO {} (member, connection_time)
             VALUES (%s, %s)
@@ -218,7 +249,7 @@ class Orm:
         return False
 
     async def room_escape(self, username: str, room: str) -> bool:
-        if await self.room_exist(room):
+        if await self.table_exist(room):
             self.cursor.execute(sql.SQL("""
             DELETE FROM {}
             WHERE member = %s
@@ -238,7 +269,7 @@ class Orm:
               "username": username})
         self.conn.commit()
 
-    async def room_exist(self, room):
+    async def table_exist(self, room):
         self.cursor.execute("""
         SELECT EXISTS (
             SELECT FROM 

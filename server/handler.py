@@ -25,8 +25,11 @@ class RequestHandler:
         if client is False:
             return api.Response(status=api.CodeResult.Value('bad'))
 
-        if request_type == Requests.SEND_MESSAGE:
+        elif request_type == Requests.SEND_MESSAGE:
             return await client.send_message(request.message, request.addressee)
+
+        elif request_type == Requests.INFORMATION_REQUEST:
+            return await client.get_messages_update(request.time)
 
         requests = {
             Requests.CREATE_ROOM: client.create_room,
