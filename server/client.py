@@ -60,4 +60,3 @@ class Client:
                    "info": info}
         return ClientInfo(status=CodeResult.Value('ok'),
                           json_info=json.dumps(updates))
-

@@ -30,8 +30,17 @@ class Orm:
             if log:
                 update = await self.check_update_in_log(log, update_time)
                 if update is not False:
+                    update = self.record_parce(update)
                     update_friend_messages[friend] = update
         return update_friend_messages
+
+    @staticmethod
+    def record_parce(record_list: list):
+        result = []
+        for i in record_list:
+            result.append(dict(i))
+        print(result)
+        return result
 
     async def update_room_logs(self, room_list: list, update_time: int) -> dict:
         update_room_messages = {}
@@ -39,6 +48,7 @@ class Orm:
             room = f'log_{room}'
             if await self.table_exist(room):
                 update = await self.check_update_in_log(room, update_time)
+                update = self.record_parce(update)
                 update_room_messages[room] = update
         return update_room_messages
 
@@ -193,8 +203,8 @@ class Orm:
         con = await self.connect()
         await con.execute("""
             UPDATE clients
-            SET friend_list = array_remove(friend_list, %(friend_name)s)
-            WHERE username = %(username)s
+            SET friend_list = array_remove(friend_list, $1)
+            WHERE username = $2
             """, friend_name, user_name)
         return True
 
@@ -220,8 +230,8 @@ class Orm:
             con = await self.connect()
             await con.execute("""
             DELETE FROM {}
-            WHERE member = %s
-            """.format(room), username, )
+            WHERE member = $1
+            """.format(room), username)
             await self.delete_room_from_room_list(username, room)
             return True
         return False
@@ -242,7 +252,7 @@ class Orm:
                 pg_tables
             WHERE
                 schemaname = 'public' AND
-                tablename  = %s
+                tablename  = $1
             )
         """, room)
 
