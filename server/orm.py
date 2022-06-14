@@ -3,8 +3,8 @@ import json
 import logging
 import time
 
+import asyncpg
 import psycopg
-from psycopg import sql
 
 from server.config import Settings
 
@@ -14,29 +14,14 @@ logger = logging.getLogger()
 class Orm:
     def __init__(self, config: Settings):
         self.config = config
-        self.conn = self.connect()
-        self.cursor = self.conn.cursor()
 
-    def connect(self) -> psycopg.Connection:
-        timeout = 0.1
-        connect = False
-        while not connect:
-            time.sleep(timeout)
-            try:
-                conn = psycopg.connect(dbname=self.config.db_name,
-                                       user=self.config.db_username,
-                                       password=self.config.db_password,
-                                       host=self.config.db_host,
-                                       port=self.config.db_port)
-            except psycopg.OperationalError:
-                timeout += 0.1
-                if timeout > 0.5:
-                    logger.critical('Error - connect to database host: %s, port: %s',
-                                    self.config.db_host, self.config.db_port)
-                    raise psycopg.OperationalError('connection with database failed')
-                continue
-            connect = True
-        return conn
+    async def connect(self) -> asyncpg.connect:
+        con = await asyncpg.connect(database=self.config.db_name,
+                                    user=self.config.db_username,
+                                    password=self.config.db_password,
+                                    host=self.config.db_host,
+                                    port=self.config.db_port)
+        return con
 
     async def update_friend_logs(self, username: str, friend_list: list, update_time: int) -> dict:
         update_friend_messages = {}
@@ -58,54 +43,46 @@ class Orm:
         return update_room_messages
 
     async def check_update_in_log(self, log_name: str, update_time: int):
-        self.cursor.execute(sql.SQL("""
-        SELECT * 
+        con = await self.connect()
+        result = await con.fetch("""
+        SELECT *
         FROM {}
-        WHERE message_time > %s
-        """).format(sql.Identifier(log_name)), (update_time,))
-        result = self.cursor.fetchall()
-        self.conn.commit()
+        WHERE message_time > $1
+        """.format(log_name), update_time)
         if len(result) > 0:
             return result
         return False
 
     async def message_in_room(self, message: str, addressee: str, user: str) -> bool:
         if await self.table_exist(addressee) and await self.check_room_in_room_list(user, addressee):
+            con = await self.connect()
             addressee = f'log_{addressee}'
-            self.cursor.execute(sql.SQL("""
+            await con.execute("""
             INSERT INTO {} (member, message, message_time)
-            VALUES (%(member)s, %(message)s, %(message_time)s)
-            """).format(sql.Identifier(addressee)),
-                                {"member": user,
-                                 "message": message,
-                                 "message_time": int(time.time())})
-            self.conn.commit()
+            VALUES ($1, $2, $3)
+            """.format(addressee), user, message, int(time.time()))
             return True
         return False
 
     async def check_room_in_room_list(self, username: str, room_name: str) -> bool:
-        self.cursor.execute("""
-        SELECT array_position(room_list, %(room_name)s)
+        con = await self.connect()
+        result = await con.fetch("""
+        SELECT array_position(room_list, $1)
         FROM clients
-        WHERE username=%(username)s
-        """, {"room_name": room_name,
-              "username": username})
-        if self.cursor.fetchone()[0] is None:
+        WHERE username=$2
+        """, room_name, username)
+        if result[0][0] is None:
             return False
         return True
 
     async def message_for_friend(self, message: str, addressee: str, username: str) -> bool:
         if await self.check_friend_in_friend_list(addressee, username):
+            con = await self.connect()
             log_name = await self.create_log_friend_chat(addressee, username)
-            self.cursor.execute(sql.SQL("""
+            await con.execute("""
             INSERT INTO {} (member, message, message_time)
-            VALUES (%(member)s, %(message)s, %(message_time)s)
-            """).format(sql.Identifier(log_name)),
-                                {"member": username,
-                                 "message": message,
-                                 "message_time": int(time.time())
-                                 })
-            self.conn.commit()
+            VALUES ($1, $2, $3)
+            """.format(log_name), username, message, int(time.time()))
             return True
         return False
 
@@ -127,91 +104,84 @@ class Orm:
         return log_name
 
     async def get_client_information(self, name: str) -> dict or bool:
-        self.cursor.execute("""
+        con = await self.connect()
+        result = await con.fetch("""
         SELECT username, friend_list, room_list
         FROM clients
-        WHERE username=%(username)s
-        """, {'username': name})
-        information = self.cursor.fetchone()
-
-        if information is None:
+        WHERE username=$1
+        """, name)
+        if len(result) == 0:
             return False
-        information = self.data_to_dict(information)
-        self.conn.commit()
+        information = self.data_to_dict(result)
         return information
 
     async def create_log_for_room(self, room: str):
+        con = await self.connect()
         room = f'log_{room}'
-        self.cursor.execute(sql.SQL("""
-        CREATE TABLE IF NOT EXISTS {}
-            (
-            member varchar NOT null,
-            message varchar,
-            message_time int NOT null
-            )
-        """).format(sql.Identifier(room)))
-        self.conn.commit()
+        await con.execute("""
+            CREATE TABLE IF NOT EXISTS {}
+                (
+                member varchar NOT null,
+                message varchar,
+                message_time int NOT null
+                )
+            """.format(room))
 
     async def add_new_room(self, room_name: str, creator: str) -> bool:
+        con = await self.connect()
         try:
-            self.cursor.execute(sql.SQL("""
+            await con.execute("""
             CREATE TABLE {}
             (
             creator varchar,
             member varchar NOT null,
             connection_time date NOT null
             )
-            """).format(sql.Identifier(room_name)))
+            """.format(room_name))
         except psycopg.errors.DuplicateTable:
-            self.conn.commit()
             return False
-        self.conn.commit()
+
         await self.add_creator_in_room(room_name, creator)
         await self.create_log_for_room(room_name)
         return True
 
     async def add_creator_in_room(self, room_name: str, creator: str):
-        self.cursor.execute(sql.SQL("""
+        con = await self.connect()
+        await con.execute("""
         INSERT INTO {} (creator, member, connection_time)
-        VALUES (%s, %s, %s)
-        """).format(sql.Identifier(room_name)),
-                            (creator, creator, datetime.datetime.now()))
-        self.conn.commit()
+        VALUES ($1, $2, $3)
+        """.format(room_name), creator, creator, datetime.datetime.now())
 
     async def add_friend(self, user_name: str, friend_name: str) -> bool:
         if await self.check_friend(friend_name, user_name):
-            self.cursor.execute("""
-            UPDATE clients 
-            SET friend_list = array_append(friend_list, %(friend_name)s)
-            WHERE username = %(username)s
-            """, {
-                "friend_name": friend_name,
-                "username": user_name
-            })
-            self.conn.commit()
+            con = await self.connect()
+            await con.execute("""
+            UPDATE clients
+            SET friend_list = array_append(friend_list, $1)
+            WHERE username = $2
+            """, friend_name, user_name)
             return True
         return False
 
     async def check_friend_in_friend_list(self, friend_name: str, user_name: str) -> bool:
-        self.cursor.execute("""
-        SELECT array_position(friend_list, %(friend_name)s) 
-        FROM clients 
-        WHERE username=%(username)s
-        """, {
-            "friend_name": friend_name,
-            "username": user_name
-        })
-        if self.cursor.fetchone()[0] is None:
+        con = await self.connect()
+        result = await con.fetch("""
+        SELECT array_position(friend_list, $1)
+        FROM clients
+        WHERE username=$2
+        """, friend_name, user_name)
+        if result[0][0] is None:
             return False
         return True
 
     async def client_exist(self, client_name: str) -> bool:
-        self.cursor.execute("""
-        SELECT username 
+        con = await self.connect()
+        result = await con.fetch("""
+        SELECT username
         FROM clients
-        WHERE username=%s 
-        """, (client_name,))
-        if self.cursor.fetchone() is None:
+        WHERE username=$1
+        """, client_name)
+        if len(result)== 0:
             return False
         return True
 
@@ -220,15 +190,12 @@ class Orm:
             return False
         elif not await self.check_friend_in_friend_list(friend_name, user_name):
             return False
-        self.cursor.execute("""
-        UPDATE clients 
-        SET friend_list = array_remove(friend_list, %(friend_name)s)
-        WHERE username = %(username)s
-        """, {
-            "friend_name": friend_name,
-            "username": user_name
-        })
-        self.conn.commit()
+        con = await self.connect()
+        await con.execute("""
+            UPDATE clients
+            SET friend_list = array_remove(friend_list, %(friend_name)s)
+            WHERE username = %(username)s
+            """, friend_name, user_name)
         return True
 
     async def check_friend(self, friend_name: str, user_name: str) -> bool:
@@ -240,55 +207,57 @@ class Orm:
 
     async def join_room(self, username: str, room: str) -> bool:
         if await self.table_exist(room):
-            self.cursor.execute(sql.SQL("""
+            con = await self.connect()
+            await con.execute("""
             INSERT INTO {} (member, connection_time)
-            VALUES (%s, %s)
-            """).format(sql.Identifier(room)), (username, datetime.datetime.now()))
-            self.conn.commit()
+            VALUES ($1, $2)
+            """.format(room), username, datetime.datetime.now())
             return True
         return False
 
     async def room_escape(self, username: str, room: str) -> bool:
         if await self.table_exist(room):
-            self.cursor.execute(sql.SQL("""
+            con = await self.connect()
+            await con.execute("""
             DELETE FROM {}
             WHERE member = %s
-            """).format(sql.Identifier(room)), (username,))
-            self.conn.commit()
+            """.format(room), username, )
             await self.delete_room_from_room_list(username, room)
             return True
-        self.conn.commit()
         return False
 
     async def delete_room_from_room_list(self, username: str, room: str):
-        self.cursor.execute("""
+        con = await self.connect()
+        await con.execute("""
         UPDATE clients
-        SET room_list = array_remove(room_list, %(room)s)
-        WHERE username = %(username)s
-        """, {"room": room,
-              "username": username})
-        self.conn.commit()
+        SET room_list = array_remove(room_list, $1)
+        WHERE username = $2
+        """, room, username)
 
     async def table_exist(self, room):
-        self.cursor.execute("""
+        con = await self.connect()
+        result = await con.fetch("""
         SELECT EXISTS (
-            SELECT FROM 
+            SELECT FROM
                 pg_tables
-            WHERE 
-                schemaname = 'public' AND 
+            WHERE
+                schemaname = 'public' AND
                 tablename  = %s
             )
-        """, (room,))
-        if self.cursor.fetchone()[0] is True:
+        """, room)
+
+        if result[0][0] is True:
             return True
         return False
 
     @staticmethod
     def data_to_dict(data: tuple) -> dict:
+
         result = {
-            "username": data[0],
-            "friend_list": data[1],
-            "room_list": data[2]
+            "username": data[0]['username'],
+            "friend_list": data[0]['friend_list'],
+            "room_list": data[0]['room_list']
         }
+
         result = json.dumps(result)
         return result
