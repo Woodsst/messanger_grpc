@@ -9,9 +9,15 @@ import logging
 
 logger = logging.getLogger()
 
-if __name__ == '__main__':
+
+async def main():
     logger_config()
     config = Settings()
     orm = Orm(config)
+    await orm.connect()
     logger.info("i'm born")
-    asyncio.run(server_run(orm))
+    await server_run(orm)
+
+
+if __name__ == '__main__':
+    asyncio.run(main())

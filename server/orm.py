@@ -14,14 +14,15 @@ logger = logging.getLogger()
 class Orm:
     def __init__(self, config: Settings):
         self.config = config
+        self.con = None
 
-    async def connect(self) -> asyncpg.connect:
-        con = await asyncpg.connect(database=self.config.db_name,
-                                    user=self.config.db_username,
-                                    password=self.config.db_password,
-                                    host=self.config.db_host,
-                                    port=self.config.db_port)
-        return con
+    async def connect(self):
+        self.con = await asyncpg.connect(
+            database=self.config.db_name,
+            user=self.config.db_username,
+            password=self.config.db_password,
+            host=self.config.db_host,
+            port=self.config.db_port)
 
     async def update_friend_logs(self, username: str, friend_list: list, update_time: int) -> dict:
         update_friend_messages = {}
@@ -53,8 +54,7 @@ class Orm:
         return update_room_messages
 
     async def check_update_in_log(self, log_name: str, update_time: int):
-        con = await self.connect()
-        result = await con.fetch("""
+        result = await self.con.fetch("""
         SELECT *
         FROM {}
         WHERE message_time > $1
@@ -65,9 +65,8 @@ class Orm:
 
     async def message_in_room(self, message: str, addressee: str, user: str) -> bool:
         if await self.table_exist(addressee) and await self.check_room_in_room_list(user, addressee):
-            con = await self.connect()
             addressee = f'log_{addressee}'
-            await con.execute("""
+            await self.con.execute("""
             INSERT INTO {} (member, message, message_time)
             VALUES ($1, $2, $3)
             """.format(addressee), user, message, int(time.time()))
@@ -75,8 +74,7 @@ class Orm:
         return False
 
     async def check_room_in_room_list(self, username: str, room_name: str) -> bool:
-        con = await self.connect()
-        result = await con.fetch("""
+        result = await self.con.fetch("""
         SELECT array_position(room_list, $1)
         FROM clients
         WHERE username=$2
@@ -87,9 +85,8 @@ class Orm:
 
     async def message_for_friend(self, message: str, addressee: str, username: str) -> bool:
         if await self.check_friend_in_friend_list(addressee, username):
-            con = await self.connect()
             log_name = await self.create_log_friend_chat(addressee, username)
-            await con.execute("""
+            await self.con.execute("""
             INSERT INTO {} (member, message, message_time)
             VALUES ($1, $2, $3)
             """.format(log_name), username, message, int(time.time()))
@@ -114,8 +111,7 @@ class Orm:
         return log_name
 
     async def get_client_information(self, name: str) -> dict or bool:
-        con = await self.connect()
-        result = await con.fetch("""
+        result = await self.con.fetch("""
         SELECT username, friend_list, room_list
         FROM clients
         WHERE username=$1
@@ -126,9 +122,8 @@ class Orm:
         return information
 
     async def create_log_for_room(self, room: str):
-        con = await self.connect()
         room = f'log_{room}'
-        await con.execute("""
+        await self.con.execute("""
             CREATE TABLE IF NOT EXISTS {}
                 (
                 member varchar NOT null,
@@ -138,9 +133,8 @@ class Orm:
             """.format(room))
 
     async def add_new_room(self, room_name: str, creator: str) -> bool:
-        con = await self.connect()
         try:
-            await con.execute("""
+            await self.con.execute("""
             CREATE TABLE {}
             (
             creator varchar,
@@ -156,16 +150,14 @@ class Orm:
         return True
 
     async def add_creator_in_room(self, room_name: str, creator: str):
-        con = await self.connect()
-        await con.execute("""
+        await self.con.execute("""
         INSERT INTO {} (creator, member, connection_time)
         VALUES ($1, $2, $3)
         """.format(room_name), creator, creator, datetime.datetime.now())
 
     async def add_friend(self, user_name: str, friend_name: str) -> bool:
         if await self.check_friend(friend_name, user_name):
-            con = await self.connect()
-            await con.execute("""
+            await self.con.execute("""
             UPDATE clients
             SET friend_list = array_append(friend_list, $1)
             WHERE username = $2
@@ -174,8 +166,7 @@ class Orm:
         return False
 
     async def check_friend_in_friend_list(self, friend_name: str, user_name: str) -> bool:
-        con = await self.connect()
-        result = await con.fetch("""
+        result = await self.con.fetch("""
         SELECT array_position(friend_list, $1)
         FROM clients
         WHERE username=$2
@@ -185,13 +176,12 @@ class Orm:
         return True
 
     async def client_exist(self, client_name: str) -> bool:
-        con = await self.connect()
-        result = await con.fetch("""
+        result = await self.con.fetch("""
         SELECT username
         FROM clients
         WHERE username=$1
         """, client_name)
-        if len(result)== 0:
+        if len(result) == 0:
             return False
         return True
 
@@ -200,8 +190,7 @@ class Orm:
             return False
         elif not await self.check_friend_in_friend_list(friend_name, user_name):
             return False
-        con = await self.connect()
-        await con.execute("""
+        await self.con.execute("""
             UPDATE clients
             SET friend_list = array_remove(friend_list, $1)
             WHERE username = $2
@@ -217,8 +206,7 @@ class Orm:
 
     async def join_room(self, username: str, room: str) -> bool:
         if await self.table_exist(room):
-            con = await self.connect()
-            await con.execute("""
+            await self.con.execute("""
             INSERT INTO {} (member, connection_time)
             VALUES ($1, $2)
             """.format(room), username, datetime.datetime.now())
@@ -227,8 +215,7 @@ class Orm:
 
     async def room_escape(self, username: str, room: str) -> bool:
         if await self.table_exist(room):
-            con = await self.connect()
-            await con.execute("""
+            await self.con.execute("""
             DELETE FROM {}
             WHERE member = $1
             """.format(room), username)
@@ -237,16 +224,14 @@ class Orm:
         return False
 
     async def delete_room_from_room_list(self, username: str, room: str):
-        con = await self.connect()
-        await con.execute("""
+        await self.con.execute("""
         UPDATE clients
         SET room_list = array_remove(room_list, $1)
         WHERE username = $2
         """, room, username)
 
     async def table_exist(self, room):
-        con = await self.connect()
-        result = await con.fetch("""
+        result = await self.con.fetch("""
         SELECT EXISTS (
             SELECT FROM
                 pg_tables
