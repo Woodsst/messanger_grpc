@@ -1,10 +1,13 @@
+import asyncio
 import datetime
 import json
 import logging
 import time
+from typing import Union
 
 import asyncpg
 import psycopg
+from asyncpg import Connection
 
 from server.config import Settings
 
@@ -14,15 +17,28 @@ logger = logging.getLogger()
 class Orm:
     def __init__(self, config: Settings):
         self.config = config
-        self.con = None
+        self.con: Union[Connection, None] = None
 
     async def connect(self):
-        self.con = await asyncpg.connect(
-            database=self.config.db_name,
-            user=self.config.db_username,
-            password=self.config.db_password,
-            host=self.config.db_host,
-            port=self.config.db_port)
+        timeout = 0.1
+        connect = False
+        while not connect:
+            await asyncio.sleep(timeout)
+            try:
+                self.con = await asyncpg.connect(
+                    database=self.config.db_name,
+                    user=self.config.db_username,
+                    password=self.config.db_password,
+                    host=self.config.db_host,
+                    port=self.config.db_port)
+            except ConnectionRefusedError:
+                timeout += 0.1
+                if timeout > 0.5:
+                    logger.critical('Error - connect to database host: %s, port: %s',
+                                    self.config.db_host, self.config.db_port)
+                    raise
+                continue
+            connect = True
 
     async def update_friend_logs(self, username: str, friend_list: list, update_time: int) -> dict:
         update_friend_messages = {}
@@ -34,14 +50,6 @@ class Orm:
                     update = self.record_parce(update)
                     update_friend_messages[friend] = update
         return update_friend_messages
-
-    @staticmethod
-    def record_parce(record_list: list):
-        result = []
-        for i in record_list:
-            result.append(dict(i))
-        print(result)
-        return result
 
     async def update_room_logs(self, room_list: list, update_time: int) -> dict:
         update_room_messages = {}
@@ -255,4 +263,12 @@ class Orm:
         }
 
         result = json.dumps(result)
+        return result
+
+    @staticmethod
+    def record_parce(record_list: list):
+        result = []
+        for i in record_list:
+            result.append(dict(i))
+        print(result)
         return result
