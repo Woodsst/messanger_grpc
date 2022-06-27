@@ -1,4 +1,5 @@
 from logging import config
+import logging
 
 
 def logger_config():
@@ -30,3 +31,7 @@ def logger_config():
     }
 
     config.dictConfig(log_config)
+
+
+logger_config()
+logger = logging.getLogger(__name__)

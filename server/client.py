@@ -2,6 +2,7 @@ import json
 
 from server.orm import Orm
 from server.server_proto_pb2 import Response, CodeResult, ClientInfo
+from server.logging_config import logger
 
 
 class Client:

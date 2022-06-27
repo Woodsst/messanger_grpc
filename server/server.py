@@ -1,13 +1,9 @@
-import logging
-
 import grpc
 
 from server.handler import RequestHandler, Requests
 from server.orm import Orm
 from server.server_proto_pb2 import ClientInfo, Response
 from server.server_proto_pb2_grpc import add_GreeterServicer_to_server, GreeterServicer
-
-logger = logging.getLogger()
 
 
 class Greeter(GreeterServicer):
