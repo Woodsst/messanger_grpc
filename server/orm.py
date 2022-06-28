@@ -12,11 +12,15 @@ from server.config import Settings
 
 
 class Orm:
+    """Class for connect PostgreSQL and use SQL-requests"""
+
     def __init__(self, config: Settings):
         self.config = config
         self.con: Union[Connection, None] = None
 
     async def connect(self):
+        """connecting with database"""
+
         timeout = 0.1
         connect = False
         while not connect:
@@ -38,6 +42,8 @@ class Orm:
             connect = True
 
     async def update_friend_logs(self, username: str, friend_list: list, update_time: int) -> dict:
+        """Collecting updates for friends"""
+
         update_friend_messages = {}
         for friend in friend_list:
             log = await self.check_friend_log_exist(friend, username)
@@ -49,6 +55,8 @@ class Orm:
         return update_friend_messages
 
     async def update_room_logs(self, room_list: list, update_time: int) -> dict:
+        """Collecting updates for rooms"""
+
         update_room_messages = {}
         for room in room_list:
             room = f'log_{room}'
@@ -59,6 +67,8 @@ class Orm:
         return update_room_messages
 
     async def check_update_in_log(self, log_name: str, update_time: int):
+        """SQL-reqeust for updates in log table"""
+
         result = await self.con.fetch("""
         SELECT *
         FROM {}
@@ -69,6 +79,8 @@ class Orm:
         return False
 
     async def message_in_room(self, message: str, addressee: str, user: str) -> bool:
+        """SQL-request for write a message to the room log"""
+
         if await self.table_exist(addressee) and await self.check_room_in_room_list(user, addressee):
             addressee = f'log_{addressee}'
             await self.con.execute("""
@@ -79,6 +91,8 @@ class Orm:
         return False
 
     async def check_room_in_room_list(self, username: str, room_name: str) -> bool:
+        """SQL-request for checking the availability of a room in the client's room list"""
+
         result = await self.con.fetch("""
         SELECT array_position(room_list, $1)
         FROM clients
@@ -89,6 +103,8 @@ class Orm:
         return True
 
     async def message_for_friend(self, message: str, addressee: str, username: str) -> bool:
+        """SQL-request for write a message to the friend log"""
+
         if await self.check_friend_in_friend_list(addressee, username):
             log_name = await self.create_log_friend_chat(addressee, username)
             await self.con.execute("""
@@ -99,6 +115,10 @@ class Orm:
         return False
 
     async def check_friend_log_exist(self, addressee: str, username: str) -> str or bool:
+        """Checking exist a friend log
+        The friends' journal is created based on their names,
+        so there are two possible variants of the journal name"""
+
         first = f'log_{addressee}_{username}'
         second = f'log_{username}_{addressee}'
         if await self.table_exist(first):
@@ -108,6 +128,8 @@ class Orm:
         return False
 
     async def create_log_friend_chat(self, addressee: str, username: str) -> str:
+        """Create table for friend chat"""
+
         log_name = await self.check_friend_log_exist(addressee, username)
         if log_name is False:
             log_name = f'{addressee}_{username}'
@@ -116,6 +138,8 @@ class Orm:
         return log_name
 
     async def get_client_information(self, name: str) -> dict or bool:
+        """SQL-request for getting information about the client"""
+
         result = await self.con.fetch("""
         SELECT username, friend_list, room_list
         FROM clients
@@ -127,6 +151,8 @@ class Orm:
         return information
 
     async def create_log_for_room(self, room: str):
+        """SQL-request to create log the room"""
+
         room = f'log_{room}'
         await self.con.execute("""
             CREATE TABLE IF NOT EXISTS {}
@@ -138,6 +164,8 @@ class Orm:
             """.format(room))
 
     async def add_new_room(self, room_name: str, creator: str) -> bool:
+        """SQL-request to create a new room"""
+
         try:
             await self.con.execute("""
             CREATE TABLE {}
@@ -155,12 +183,16 @@ class Orm:
         return True
 
     async def add_creator_in_room(self, room_name: str, creator: str):
+        """SQL-request for add room creator"""
+
         await self.con.execute("""
         INSERT INTO {} (creator, member, connection_time)
         VALUES ($1, $2, $3)
         """.format(room_name), creator, creator, datetime.datetime.now())
 
     async def add_friend(self, user_name: str, friend_name: str) -> bool:
+        """SQL-request to add a friend"""
+
         if await self.check_friend(friend_name, user_name):
             await self.con.execute("""
             UPDATE clients
@@ -171,6 +203,8 @@ class Orm:
         return False
 
     async def check_friend_in_friend_list(self, friend_name: str, user_name: str) -> bool:
+        """SQL-request to check if a friend is in the friends list"""
+
         result = await self.con.fetch("""
         SELECT array_position(friend_list, $1)
         FROM clients
@@ -180,17 +214,21 @@ class Orm:
             return False
         return True
 
-    async def client_exist(self, client_name: str) -> bool:
+    async def client_exist(self, user_name: str) -> bool:
+        """SQL-request to verify the existence of a client"""
+
         result = await self.con.fetch("""
         SELECT username
         FROM clients
         WHERE username=$1
-        """, client_name)
+        """, user_name)
         if len(result) == 0:
             return False
         return True
 
     async def remove_friend(self, friend_name: str, user_name: str) -> bool:
+        """SQL-request to remove friend from the friend list"""
+
         if not await self.client_exist(friend_name):
             return False
         elif not await self.check_friend_in_friend_list(friend_name, user_name):
@@ -203,6 +241,8 @@ class Orm:
         return True
 
     async def check_friend(self, friend_name: str, user_name: str) -> bool:
+        """Check the friend in client list and friend list"""
+
         if not await self.client_exist(friend_name):
             return False
         elif await self.check_friend_in_friend_list(friend_name, user_name):
@@ -210,6 +250,8 @@ class Orm:
         return True
 
     async def join_room(self, username: str, room: str) -> bool:
+        """SQL-request to join an existing room"""
+
         if await self.table_exist(room):
             await self.con.execute("""
             INSERT INTO {} (member, connection_time)
@@ -219,6 +261,8 @@ class Orm:
         return False
 
     async def room_escape(self, username: str, room: str) -> bool:
+        """SQL-request to leave the room"""
+
         if await self.table_exist(room):
             await self.con.execute("""
             DELETE FROM {}
@@ -229,6 +273,8 @@ class Orm:
         return False
 
     async def delete_room_from_room_list(self, username: str, room: str):
+        """SQL-request to remove a room from the list rooms"""
+
         await self.con.execute("""
         UPDATE clients
         SET room_list = array_remove(room_list, $1)
@@ -236,6 +282,8 @@ class Orm:
         """, room, username)
 
     async def table_exist(self, room):
+        """SQL-request to check the existence of a table"""
+
         result = await self.con.fetch("""
         SELECT EXISTS (
             SELECT FROM
@@ -252,6 +300,7 @@ class Orm:
 
     @staticmethod
     def data_to_dict(data: tuple) -> dict:
+        """Formatting tuple(Record) to dict for JSON dump"""
 
         result = {
             "username": data[0]['username'],
@@ -264,8 +313,9 @@ class Orm:
 
     @staticmethod
     def record_parce(record_list: list):
+        """Formatting Record to list"""
+
         result = []
         for i in record_list:
             result.append(dict(i))
-        print(result)
         return result

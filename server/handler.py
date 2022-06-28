@@ -17,10 +17,14 @@ class Requests(enum.Enum):
 
 
 class RequestHandler:
+    """Request handler"""
+
     def __init__(self, orm: Orm):
         self.orm = orm
 
     async def handle(self, request, request_type: str) -> api.Response:
+        """Handler all requests from clients"""
+
         client = await self.check_client(request.credentials)
         if client is False:
             return api.Response(status=api.CodeResult.Value('bad'))
@@ -45,6 +49,8 @@ class RequestHandler:
             return await requests[request_type](request.room)
 
     async def check_client(self, credentials: str) -> Client or bool:
+        """Checking client existence"""
+
         info = await get_client_info(credentials, self.orm)
         if info:
             client = Client(info['username'], self.orm)

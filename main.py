@@ -6,13 +6,15 @@ from server.logging_config import logger
 from server.config import Settings
 
 
-async def main():
+async def main(server_address: str):
+    """Configuring server settings and starting the server"""
+
     config = Settings()
     orm = Orm(config)
     await orm.connect()
     logger.info("server for messanger start")
-    await server_run(orm)
+    await server_run(server_address, orm)
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    asyncio.run(main('localhost:5000'))

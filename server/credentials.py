@@ -8,6 +8,8 @@ from server.logging_config import logger
 
 
 def credentials_validation(credentials: str) -> str or bool:
+    """Decode client jwt"""
+
     key = Settings()
     key = key.secret_key
     try:
@@ -19,6 +21,8 @@ def credentials_validation(credentials: str) -> str or bool:
 
 
 async def get_client_info(credentials: str, db: Orm) -> dict or bool:
+    """Getting client information from the database"""
+
     client = credentials_validation(credentials)
     if client is not False:
         information = await db.get_client_information(client['user'])
