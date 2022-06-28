@@ -1,17 +1,14 @@
 import asyncio
 import datetime
 import json
-import logging
 import time
 from typing import Union
 
 import asyncpg
 import psycopg
 from asyncpg import Connection
-
+from server.logging_config import logger
 from server.config import Settings
-
-logger = logging.getLogger()
 
 
 class Orm:

@@ -6,7 +6,8 @@ import server_proto_pb2 as server__proto__pb2
 
 
 class GreeterStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """Server
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -52,46 +53,54 @@ class GreeterStub(object):
 
 
 class GreeterServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """Server
+    """
 
     def InformationRequest(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Method for getting information about changes in client data
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SendMessage(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Method for handle and write client message
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def AddFriend(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Method for handle client request for add friend
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def RemoveFriend(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Method for handle client request for remove friend
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def CreateRoom(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Method for handle client request for create new room
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def JoinRoom(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Method for handle client request for join room
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def RoomEscape(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Method for handle client request for to leave room
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -142,7 +151,8 @@ def add_GreeterServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Greeter(object):
-    """Missing associated documentation comment in .proto file."""
+    """Server
+    """
 
     @staticmethod
     def InformationRequest(request,

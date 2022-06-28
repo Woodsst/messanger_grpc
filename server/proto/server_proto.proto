@@ -1,67 +1,85 @@
 syntax = "proto3";
 
-service Greeter {
+service Greeter {// Server
+
+  // Method for getting information about changes in client data
   rpc InformationRequest (RequestSelfInfo) returns (ClientInfo) {}
+
+  // Method for handle and write client message
   rpc SendMessage (Message) returns (Response) {}
+
+  // Method for handle client request for add friend
   rpc AddFriend (AddFriendRequest) returns (Response) {}
+
+  // Method for handle client request for remove friend
   rpc RemoveFriend (RemoveFriendRequest) returns (Response) {}
+
+  // Method for handle client request for create new room
   rpc CreateRoom (CreateRoomRequest) returns (Response) {}
+
+  // Method for handle client request for join room
   rpc JoinRoom (JoinRoomRequest) returns (Response) {}
+
+  // Method for handle client request for to leave room
   rpc RoomEscape(EscapeRoomRequest) returns (Response) {}
 }
 
 enum CodeResult {
-  unknown_format = 0;
+  unknown_format = 0; // wrong format
   ok = 1;
   bad  = 2;
 }
 
+// JSON client data
 message ClientInfo {
   CodeResult status = 1;
   string json_info = 2;
 }
 
+// Request for response information about self
 message RequestSelfInfo {
   string credentials = 1;
-  int32 time = 2;
+  int32 time = 2; // time for correct update
 }
 
+// response with the result of the request
 message Response {
   CodeResult status = 1;
 }
 
-message RoomUpdate {
-  CodeResult status = 1;
-  string new_message = 2;
-}
-
+// message for a room or a friend
 message Message {
   string message = 1;
-  string addressee = 2;
+  string addressee = 2; // room address or other client
   string credentials = 3;
 }
 
+// request to add a new friend
 message AddFriendRequest {
   string friend = 1;
   string credentials = 2;
 }
 
+// request to remove a friend
 message RemoveFriendRequest {
   string friend = 1;
   string credentials = 2;
 }
 
+// request to create a new room
 message CreateRoomRequest {
   string room = 1;
   string credentials = 2;
 }
 
+// request to join an existing room
 message JoinRoomRequest {
   string room = 1;
   string credentials = 2;
 
 }
 
+// request for to leave a room
 message EscapeRoomRequest {
   string room = 1;
   string credentials = 2;
