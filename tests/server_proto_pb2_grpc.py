@@ -5,7 +5,7 @@ import grpc
 import server_proto_pb2 as server__proto__pb2
 
 
-class GreeterStub(object):
+class MessangerStub(object):
     """Server
     """
 
@@ -16,43 +16,43 @@ class GreeterStub(object):
             channel: A grpc.Channel.
         """
         self.InformationRequest = channel.unary_unary(
-                '/Greeter/InformationRequest',
+                '/Messanger/InformationRequest',
                 request_serializer=server__proto__pb2.RequestSelfInfo.SerializeToString,
                 response_deserializer=server__proto__pb2.ClientInfo.FromString,
                 )
         self.SendMessage = channel.unary_unary(
-                '/Greeter/SendMessage',
+                '/Messanger/SendMessage',
                 request_serializer=server__proto__pb2.Message.SerializeToString,
                 response_deserializer=server__proto__pb2.Response.FromString,
                 )
         self.AddFriend = channel.unary_unary(
-                '/Greeter/AddFriend',
+                '/Messanger/AddFriend',
                 request_serializer=server__proto__pb2.AddFriendRequest.SerializeToString,
                 response_deserializer=server__proto__pb2.Response.FromString,
                 )
         self.RemoveFriend = channel.unary_unary(
-                '/Greeter/RemoveFriend',
+                '/Messanger/RemoveFriend',
                 request_serializer=server__proto__pb2.RemoveFriendRequest.SerializeToString,
                 response_deserializer=server__proto__pb2.Response.FromString,
                 )
         self.CreateRoom = channel.unary_unary(
-                '/Greeter/CreateRoom',
+                '/Messanger/CreateRoom',
                 request_serializer=server__proto__pb2.CreateRoomRequest.SerializeToString,
                 response_deserializer=server__proto__pb2.Response.FromString,
                 )
         self.JoinRoom = channel.unary_unary(
-                '/Greeter/JoinRoom',
+                '/Messanger/JoinRoom',
                 request_serializer=server__proto__pb2.JoinRoomRequest.SerializeToString,
                 response_deserializer=server__proto__pb2.Response.FromString,
                 )
         self.RoomEscape = channel.unary_unary(
-                '/Greeter/RoomEscape',
+                '/Messanger/RoomEscape',
                 request_serializer=server__proto__pb2.EscapeRoomRequest.SerializeToString,
                 response_deserializer=server__proto__pb2.Response.FromString,
                 )
 
 
-class GreeterServicer(object):
+class MessangerServicer(object):
     """Server
     """
 
@@ -106,7 +106,7 @@ class GreeterServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_GreeterServicer_to_server(servicer, server):
+def add_MessangerServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'InformationRequest': grpc.unary_unary_rpc_method_handler(
                     servicer.InformationRequest,
@@ -145,12 +145,12 @@ def add_GreeterServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'Greeter', rpc_method_handlers)
+            'Messanger', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class Greeter(object):
+class Messanger(object):
     """Server
     """
 
@@ -165,7 +165,7 @@ class Greeter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Greeter/InformationRequest',
+        return grpc.experimental.unary_unary(request, target, '/Messanger/InformationRequest',
             server__proto__pb2.RequestSelfInfo.SerializeToString,
             server__proto__pb2.ClientInfo.FromString,
             options, channel_credentials,
@@ -182,7 +182,7 @@ class Greeter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Greeter/SendMessage',
+        return grpc.experimental.unary_unary(request, target, '/Messanger/SendMessage',
             server__proto__pb2.Message.SerializeToString,
             server__proto__pb2.Response.FromString,
             options, channel_credentials,
@@ -199,7 +199,7 @@ class Greeter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Greeter/AddFriend',
+        return grpc.experimental.unary_unary(request, target, '/Messanger/AddFriend',
             server__proto__pb2.AddFriendRequest.SerializeToString,
             server__proto__pb2.Response.FromString,
             options, channel_credentials,
@@ -216,7 +216,7 @@ class Greeter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Greeter/RemoveFriend',
+        return grpc.experimental.unary_unary(request, target, '/Messanger/RemoveFriend',
             server__proto__pb2.RemoveFriendRequest.SerializeToString,
             server__proto__pb2.Response.FromString,
             options, channel_credentials,
@@ -233,7 +233,7 @@ class Greeter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Greeter/CreateRoom',
+        return grpc.experimental.unary_unary(request, target, '/Messanger/CreateRoom',
             server__proto__pb2.CreateRoomRequest.SerializeToString,
             server__proto__pb2.Response.FromString,
             options, channel_credentials,
@@ -250,7 +250,7 @@ class Greeter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Greeter/JoinRoom',
+        return grpc.experimental.unary_unary(request, target, '/Messanger/JoinRoom',
             server__proto__pb2.JoinRoomRequest.SerializeToString,
             server__proto__pb2.Response.FromString,
             options, channel_credentials,
@@ -267,7 +267,7 @@ class Greeter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Greeter/RoomEscape',
+        return grpc.experimental.unary_unary(request, target, '/Messanger/RoomEscape',
             server__proto__pb2.EscapeRoomRequest.SerializeToString,
             server__proto__pb2.Response.FromString,
             options, channel_credentials,

@@ -7,7 +7,7 @@ import pytest
 from config import Settings
 from orm import Orm
 from server_command import terminate_server
-from server_proto_pb2_grpc import GreeterStub
+from server_proto_pb2_grpc import MessangerStub
 
 config = Settings()
 
@@ -33,5 +33,5 @@ def orm():
 @pytest.fixture(scope='function')
 def send_message():
     with grpc.insecure_channel('localhost:5000') as channel:
-        stub = GreeterStub(channel)
+        stub = MessangerStub(channel)
         yield stub

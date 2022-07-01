@@ -3,10 +3,10 @@ import grpc
 from server.handler import RequestHandler, Requests
 from server.orm import Orm
 from server.server_proto_pb2 import ClientInfo, Response
-from server.server_proto_pb2_grpc import add_GreeterServicer_to_server, GreeterServicer
+from server.server_proto_pb2_grpc import MessangerServicer, add_MessangerServicer_to_server
 
 
-class Greeter(GreeterServicer):
+class Greeter(MessangerServicer):
     """A class that receives requests for processing from clients"""
 
     def __init__(self, orm: Orm):
@@ -46,7 +46,7 @@ async def server_run(server_address: str, orm: Orm):
     """starting grpc server"""
 
     server = grpc.aio.server()
-    add_GreeterServicer_to_server(Greeter(orm), server)
+    add_MessangerServicer_to_server(Greeter(orm), server)
     server.add_insecure_port(server_address)
     await server.start()
     await server.wait_for_termination()

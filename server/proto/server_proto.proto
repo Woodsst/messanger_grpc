@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-service Greeter {// Server
+service Messanger {// Server
 
   // Method for getting information about changes in client data
   rpc InformationRequest (RequestSelfInfo) returns (ClientInfo) {}
