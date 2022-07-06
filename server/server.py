@@ -43,7 +43,7 @@ class Greeter(MessangerServicer):
 
     async def RemoveRoom(self, request, context):
         """Handler of a request to remove a room"""
-        pass
+        return await self.handler.handle(request, Requests.REMOVE_ROOM)
 
 
 async def server_run(server_address: str, orm: Orm):

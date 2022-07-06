@@ -14,6 +14,7 @@ class Requests(enum.Enum):
     ROOM_ESCAPE = "Room escape"
     ADD_FRIEND = "Add friend"
     REMOVE_FRIEND = "Remove friend"
+    REMOVE_ROOM = "Remove room"
 
 
 class RequestHandler:
@@ -36,11 +37,12 @@ class RequestHandler:
             return await client.get_messages_update(request.time)
 
         requests = {
+            Requests.REMOVE_ROOM: client.remove_room,
             Requests.CREATE_ROOM: client.create_room,
             Requests.ADD_FRIEND: client.add_friend,
             Requests.REMOVE_FRIEND: client.remove_friend,
             Requests.JOIN_ROOM: client.join_room,
-            Requests.ROOM_ESCAPE: client.room_escape,
+            Requests.ROOM_ESCAPE: client.room_escape
         }
 
         try:

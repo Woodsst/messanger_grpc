@@ -41,6 +41,45 @@ class Orm:
                 continue
             connect = True
 
+    async def remove_room(self, room_name: str, username: str) -> bool:
+        """SQL-request to remove a room"""
+
+        if await self.room_exist(room_name) and self.check_creator_room(username, room_name):
+            room_log = f'log_{room_name}'
+            async with self.con.transaction():
+                await self.con.execute("""
+                    DROP TABLE {};
+                    DROP TABLE {};
+                    """.format(room_name, room_log))
+                return True
+        return False
+
+    async def check_creator_room(self, username: str, room_name: str) -> bool:
+        """SQL-request that the client is the creator of the room"""
+
+        result = await self.con.fetch("""
+        SELECT creator
+        FROM {}
+        WHERE creator=$1
+        """.format(room_name), username)
+
+        if len(result) > 0:
+            return True
+        return False
+
+    async def room_exist(self, room_name: str) -> bool:
+        """SQL-request to check room exist"""
+
+        result = await self.con.fetch("""
+        SELECT * 
+        FROM INFORMATION_SCHEMA.TABLES 
+        WHERE TABLE_NAME=$1
+        """, room_name)
+
+        if len(result) > 0:
+            return True
+        return False
+
     async def update_friend_logs(self, username: str, friend_list: list, update_time: int) -> dict:
         """Collecting updates for friends"""
 

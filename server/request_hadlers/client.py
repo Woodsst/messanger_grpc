@@ -9,6 +9,12 @@ class Client:
         self.name = name
         self.orm = orm
 
+    async def remove_room(self, room_name: str) -> Response:
+        room_name = f'r_{room_name}'
+        if await self.orm.remove_room(room_name, self.name):
+            return Response(status=CodeResult.Value('ok'))
+        return Response(status=CodeResult.Value('bad'))
+
     async def send_message(self, message: str, addressee: str) -> Response:
         if addressee[:2] == 'r_':
             if await self.orm.message_in_room(message, addressee, self.name):
