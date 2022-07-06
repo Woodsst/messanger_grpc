@@ -1,5 +1,5 @@
 from client_data_for_tests import TOKEN, ROOM, BAD_TOKEN
-from server_proto_pb2 import CreateRoomRequest
+from proto_api.server_proto_pb2 import CreateRoomRequest
 
 
 def test_create_room(send_message, orm):

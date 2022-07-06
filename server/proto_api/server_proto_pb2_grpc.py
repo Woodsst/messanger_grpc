@@ -50,6 +50,11 @@ class MessangerStub(object):
                 request_serializer=server__proto__pb2.EscapeRoomRequest.SerializeToString,
                 response_deserializer=server__proto__pb2.Response.FromString,
                 )
+        self.RemoveRoom = channel.unary_unary(
+                '/Messanger/RemoveRoom',
+                request_serializer=server__proto__pb2.RemoveRoomReqeust.SerializeToString,
+                response_deserializer=server__proto__pb2.Response.FromString,
+                )
 
 
 class MessangerServicer(object):
@@ -105,6 +110,13 @@ class MessangerServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def RemoveRoom(self, request, context):
+        """Method for handle client request for to remove room
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_MessangerServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -141,6 +153,11 @@ def add_MessangerServicer_to_server(servicer, server):
             'RoomEscape': grpc.unary_unary_rpc_method_handler(
                     servicer.RoomEscape,
                     request_deserializer=server__proto__pb2.EscapeRoomRequest.FromString,
+                    response_serializer=server__proto__pb2.Response.SerializeToString,
+            ),
+            'RemoveRoom': grpc.unary_unary_rpc_method_handler(
+                    servicer.RemoveRoom,
+                    request_deserializer=server__proto__pb2.RemoveRoomReqeust.FromString,
                     response_serializer=server__proto__pb2.Response.SerializeToString,
             ),
     }
@@ -269,6 +286,23 @@ class Messanger(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Messanger/RoomEscape',
             server__proto__pb2.EscapeRoomRequest.SerializeToString,
+            server__proto__pb2.Response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def RemoveRoom(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Messanger/RemoveRoom',
+            server__proto__pb2.RemoveRoomReqeust.SerializeToString,
             server__proto__pb2.Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

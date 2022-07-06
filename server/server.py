@@ -1,9 +1,9 @@
 import grpc
 
-from server.handler import RequestHandler, Requests
+from server.request_hadlers.handler import RequestHandler, Requests
 from server.orm import Orm
-from server.server_proto_pb2 import ClientInfo, Response
-from server.server_proto_pb2_grpc import MessangerServicer, add_MessangerServicer_to_server
+from server.proto_api.server_proto_pb2 import ClientInfo, Response
+from server.proto_api.server_proto_pb2_grpc import MessangerServicer, add_MessangerServicer_to_server
 
 
 class Greeter(MessangerServicer):
@@ -40,6 +40,10 @@ class Greeter(MessangerServicer):
     async def RemoveFriend(self, request, context) -> Response:
         """Handler of a request to remove a friend"""
         return await self.handler.handle(request, Requests.REMOVE_FRIEND)
+
+    async def RemoveRoom(self, request, context):
+        """Handler of a request to remove a room"""
+        pass
 
 
 async def server_run(server_address: str, orm: Orm):

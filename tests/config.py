@@ -40,17 +40,17 @@ class Settings:
         with open(self.path, 'w') as file:
             yaml.dump({
                 "db_name": "test_messanger",
-                "db_username": "wood",
+                "db_username": "test",
                 "db_password": "123",
                 "db_port": 5432,
-                "db_host": "localhost",
+                "db_host": "database",
                 "secret_key": "secret_key"
             }, file)
         self.db_name = "test_messanger"
-        self.db_username = "wood"
+        self.db_username = "test"
         self.db_password = "123"
         self.db_port = 5432
-        self.db_host = "localhost"
+        self.db_host = "database"
         self.secret_key = "secret_key"
 
     def reset_default_config(self):

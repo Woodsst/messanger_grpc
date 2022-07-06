@@ -22,12 +22,21 @@ service Messanger {// Server
 
   // Method for handle client request for to leave room
   rpc RoomEscape(EscapeRoomRequest) returns (Response) {}
+
+  // Method for handle client request for to remove room
+  rpc RemoveRoom(RemoveRoomReqeust) returns (Response) {}
+
 }
 
 enum CodeResult {
   unknown_format = 0; // wrong format
   ok = 1;
   bad  = 2;
+}
+
+message RemoveRoomReqeust{
+  string room = 1;
+  string credentials = 2;
 }
 
 // JSON client data

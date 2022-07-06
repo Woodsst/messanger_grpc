@@ -1,5 +1,5 @@
 from client_data_for_tests import TOKEN, BAD_TOKEN, ROOM
-from server_proto_pb2 import EscapeRoomRequest, JoinRoomRequest, CreateRoomRequest
+from proto_api.server_proto_pb2 import EscapeRoomRequest, JoinRoomRequest, CreateRoomRequest
 
 
 def test_escape_room(send_message, orm):

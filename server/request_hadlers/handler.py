@@ -1,8 +1,8 @@
 import enum
 
-import server.server_proto_pb2 as api
-from server.client import Client
-from server.credentials import get_client_info
+import server.proto_api.server_proto_pb2 as api
+from server.request_hadlers.client import Client
+from server.request_hadlers.credentials import get_client_info
 from server.orm import Orm
 
 

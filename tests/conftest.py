@@ -7,7 +7,7 @@ import pytest
 from config import Settings
 from orm import Orm
 from server_command import terminate_server
-from server_proto_pb2_grpc import MessangerStub
+from proto_api.server_proto_pb2_grpc import MessangerStub
 
 config = Settings()
 
