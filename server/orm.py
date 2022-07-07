@@ -306,6 +306,7 @@ class Orm:
             INSERT INTO {} (member, connection_time)
             VALUES ($1, $2)
             """.format(room), username, datetime.datetime.now())
+            await self.add_room_in_room_list(room, username)
             return True
         return False
 
