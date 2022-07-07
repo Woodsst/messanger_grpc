@@ -44,7 +44,7 @@ class Orm:
     async def remove_room(self, room_name: str, username: str) -> bool:
         """SQL-request to remove a room"""
 
-        if await self.room_exist(room_name) and self.check_creator_room(username, room_name):
+        if await self.room_exist(room_name) and await self.check_creator_room(username, room_name):
             room_log = f'log_{room_name}'
             async with self.con.transaction():
                 await self.con.execute("""
@@ -115,7 +115,7 @@ class Orm:
         """.format(log_name), update_time)
         if len(result) > 0:
             return result
-        return False
+        return []
 
     async def message_in_room(self, message: str, addressee: str, user: str) -> bool:
         """SQL-request for write a message to the room log"""
@@ -217,9 +217,19 @@ class Orm:
         except psycopg.errors.DuplicateTable:
             return False
 
+        await self.add_room_in_room_list(room_name,  creator)
         await self.add_creator_in_room(room_name, creator)
         await self.create_log_for_room(room_name)
         return True
+
+    async def add_room_in_room_list(self, room_name: str, creator: str):
+        """SQL-request to add room in creator room list"""
+
+        await self.con.execute("""
+            UPDATE clients
+            SET room_list = array_append(room_list, $1)
+            WHERE username = $2
+            """, room_name, creator)
 
     async def add_creator_in_room(self, room_name: str, creator: str):
         """SQL-request for add room creator"""
