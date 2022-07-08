@@ -204,23 +204,23 @@ class Orm:
 
     async def add_new_room(self, room_name: str, creator: str) -> bool:
         """SQL-request to create a new room"""
+        async with self.con.transaction():
+            try:
+                await self.con.execute("""
+                CREATE TABLE {}
+                (
+                creator varchar,
+                member varchar NOT null,
+                connection_time date NOT null
+                )
+                """.format(room_name))
+            except psycopg.errors.DuplicateTable:
+                return False
 
-        try:
-            await self.con.execute("""
-            CREATE TABLE {}
-            (
-            creator varchar,
-            member varchar NOT null,
-            connection_time date NOT null
-            )
-            """.format(room_name))
-        except psycopg.errors.DuplicateTable:
-            return False
-
-        await self.add_room_in_room_list(room_name,  creator)
-        await self.add_creator_in_room(room_name, creator)
-        await self.create_log_for_room(room_name)
-        return True
+            await self.add_room_in_room_list(room_name,  creator)
+            await self.add_creator_in_room(room_name, creator)
+            await self.create_log_for_room(room_name)
+            return True
 
     async def add_room_in_room_list(self, room_name: str, creator: str):
         """SQL-request to add room in creator room list"""
