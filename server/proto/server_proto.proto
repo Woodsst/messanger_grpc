@@ -26,12 +26,25 @@ service Messanger {// Server
   // Method for handle client request for to remove room
   rpc RemoveRoom(RemoveRoomReqeust) returns (Response) {}
 
+  // Method for getting information about new messages
+  rpc MessagesUpdate(MessagesUpdateRequest) returns (Update_data) {}
+
 }
 
 enum CodeResult {
   unknown_format = 0; // wrong format
   ok = 1;
   bad  = 2;
+}
+
+message Update_data{
+  CodeResult status = 1;
+  string json_info = 2;
+}
+
+message MessagesUpdateRequest{
+  string credentials = 1;
+  int32 time = 2; // time for correct update
 }
 
 message RemoveRoomReqeust{

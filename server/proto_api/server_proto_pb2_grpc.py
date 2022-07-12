@@ -55,6 +55,11 @@ class MessangerStub(object):
                 request_serializer=server__proto__pb2.RemoveRoomReqeust.SerializeToString,
                 response_deserializer=server__proto__pb2.Response.FromString,
                 )
+        self.MessagesUpdate = channel.unary_unary(
+                '/Messanger/MessagesUpdate',
+                request_serializer=server__proto__pb2.MessagesUpdateRequest.SerializeToString,
+                response_deserializer=server__proto__pb2.Update_data.FromString,
+                )
 
 
 class MessangerServicer(object):
@@ -117,6 +122,13 @@ class MessangerServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def MessagesUpdate(self, request, context):
+        """Method for getting information about new messages
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_MessangerServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -159,6 +171,11 @@ def add_MessangerServicer_to_server(servicer, server):
                     servicer.RemoveRoom,
                     request_deserializer=server__proto__pb2.RemoveRoomReqeust.FromString,
                     response_serializer=server__proto__pb2.Response.SerializeToString,
+            ),
+            'MessagesUpdate': grpc.unary_unary_rpc_method_handler(
+                    servicer.MessagesUpdate,
+                    request_deserializer=server__proto__pb2.MessagesUpdateRequest.FromString,
+                    response_serializer=server__proto__pb2.Update_data.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -304,5 +321,22 @@ class Messanger(object):
         return grpc.experimental.unary_unary(request, target, '/Messanger/RemoveRoom',
             server__proto__pb2.RemoveRoomReqeust.SerializeToString,
             server__proto__pb2.Response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def MessagesUpdate(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Messanger/MessagesUpdate',
+            server__proto__pb2.MessagesUpdateRequest.SerializeToString,
+            server__proto__pb2.Update_data.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
