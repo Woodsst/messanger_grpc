@@ -217,7 +217,7 @@ class Orm:
             except psycopg.errors.DuplicateTable:
                 return False
 
-            await self.add_room_in_room_list(room_name,  creator)
+            await self.add_room_in_room_list(room_name, creator)
             await self.add_creator_in_room(room_name, creator)
             await self.create_log_for_room(room_name)
             return True
@@ -241,15 +241,21 @@ class Orm:
 
     async def add_friend(self, user_name: str, friend_name: str) -> bool:
         """SQL-request to add a friend"""
+        async with self.con.transaction():
+            if await self.check_friend(friend_name, user_name):
+                await self.append_in_friend_list(user_name, friend_name)
+                await self.append_in_friend_list(friend_name, user_name)
+                return True
+            return False
 
-        if await self.check_friend(friend_name, user_name):
-            await self.con.execute("""
-            UPDATE clients
-            SET friend_list = array_append(friend_list, $1)
-            WHERE username = $2
-            """, friend_name, user_name)
-            return True
-        return False
+    async def append_in_friend_list(self, user_name: str, friend_name: str):
+        """SQL-request to append a friend to the friend list"""
+
+        await self.con.execute("""
+        UPDATE clients
+        SET friend_list = array_append(friend_list, $1)
+        WHERE username = $2
+        """, friend_name, user_name)
 
     async def check_friend_in_friend_list(self, friend_name: str, user_name: str) -> bool:
         """SQL-request to check if a friend is in the friends list"""
