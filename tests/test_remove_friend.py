@@ -1,5 +1,5 @@
-from client_data_for_tests import USER_2, TOKEN, BAD_TOKEN
-from proto_api.server_proto_pb2 import RemoveFriendRequest
+from tests.client_data_for_tests import USER_2, TOKEN, BAD_TOKEN
+from server.proto_api.server_proto_pb2 import RemoveFriendRequest
 
 
 def test_remove_friend(send_message, orm):

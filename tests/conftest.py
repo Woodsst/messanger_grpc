@@ -1,13 +1,16 @@
 import os
+import sys
 import time
 
 import grpc
 import pytest
 
-from config import Settings
-from orm import Orm
-from server_command import terminate_server
-from proto_api.server_proto_pb2_grpc import MessangerStub
+from server.proto_api.server_proto_pb2_grpc import MessangerStub
+from tests.config import Settings
+from tests.orm import Orm
+from tests.server_command import terminate_server
+# from proto_api.server_proto_pb2_grpc import MessangerStub
+print(sys.path)
 
 config = Settings()
 
@@ -32,6 +35,6 @@ def orm():
 
 @pytest.fixture(scope='function')
 def send_message():
-    with grpc.insecure_channel('localhost:5000') as channel:
+    with grpc.insecure_channel('localhost:5001') as channel:
         stub = MessangerStub(channel)
         yield stub

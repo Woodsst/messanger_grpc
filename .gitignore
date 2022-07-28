@@ -9,3 +9,4 @@ tests/__pycache__
 server/proto_api/__pycache__/
 server/request_hadlers/__pycache__/
 tests/proto_api/__pycache__/
+.coverage

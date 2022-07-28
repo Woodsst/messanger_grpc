@@ -1,6 +1,6 @@
 import jwt
 
-from config import Settings
+from tests.config import Settings
 
 USER = 'test_user'
 PASSWD = 'passwd'

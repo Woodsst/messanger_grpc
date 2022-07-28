@@ -1,5 +1,5 @@
-from client_data_for_tests import USER, USER_2, TOKEN, TOKEN_USER_2, ROOM, LOG_ROOM, BAD_TOKEN
-from proto_api.server_proto_pb2 import Message, CreateRoomRequest
+from tests.client_data_for_tests import USER, USER_2, TOKEN, TOKEN_USER_2, ROOM, LOG_ROOM, BAD_TOKEN
+from server.proto_api.server_proto_pb2 import Message, CreateRoomRequest
 
 
 def test_send_message_to_room(send_message, orm):

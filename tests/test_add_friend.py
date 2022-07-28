@@ -1,5 +1,5 @@
-from client_data_for_tests import TOKEN, BAD_TOKEN, USER_3, USER_2, BAD_JWT
-from proto_api.server_proto_pb2 import AddFriendRequest
+from tests.client_data_for_tests import TOKEN, BAD_TOKEN, USER_3, USER_2, BAD_JWT
+from server.proto_api.server_proto_pb2 import AddFriendRequest
 
 
 def test_add_friend(server_start, send_message, orm):

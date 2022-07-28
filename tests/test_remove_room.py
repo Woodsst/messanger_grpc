@@ -1,5 +1,5 @@
-from client_data_for_tests import TOKEN, ROOM, ROOM_2
-from proto_api.server_proto_pb2 import RemoveRoomReqeust, CreateRoomRequest
+from tests.client_data_for_tests import TOKEN, ROOM, ROOM_2
+from server.proto_api.server_proto_pb2 import RemoveRoomReqeust, CreateRoomRequest
 
 
 def test_remove_room(send_message, orm):
