@@ -42,29 +42,22 @@ class Orm:
         """)
         self.conn.commit()
 
-    def client_add(self, username: str, passwd: str, friend_list: set, room_list: set):
-        friend_list = ''.join(x for x in str(friend_list) if x != "'")
-        room_list = ''.join(x for x in str(room_list) if x != "'")
+    def client_add(self, username: str, passwd: str):
         self.cursor.execute("""
-        INSERT INTO clients (username, passwd, registration_date, friend_list, room_list)
-        VALUES (%(username)s, %(passwd)s, %(registration_date)s, %(friend_list)s, %(room_list)s)
+        INSERT INTO clients (username, passwd, registration_date)
+        VALUES (%(username)s, %(passwd)s, %(registration_date)s)
         """, {
             "username": username,
             "passwd": passwd,
             "registration_date": int(time.time()),
-            "friend_list": str(friend_list),
-            "room_list": str(room_list)
         }
                             )
         self.conn.commit()
 
     def create_test_clients(self):
-        self.client_add('test_user', 'asd1', {'test_user_1', 'test_user_2'},
-                        {'r_test_room_1', 'r_test_room_2', 'r_test_room_3'})
-        self.client_add('test_user_2', 'asasdd1', {'test_user', 'test_user_1', 'test_user_2'},
-                        {'r_test_room_1', 'r_test_room_2'})
-        self.client_add('test_user_3', 'asasdd1',
-                        {'test_user_0'}, {'r_test_room_0'})
+        self.client_add('test_user', 'asd1')
+        self.client_add('test_user_2', 'asasdd1')
+        self.client_add('test_user_3', 'asasdd1')
 
     def write_message_in_log(self, log: str, username: str, message: str, message_time: int):
         self.cursor.execute(sql.SQL("""

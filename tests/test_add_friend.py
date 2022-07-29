@@ -19,7 +19,3 @@ def test_add_friend_error(send_message, orm):
         AddFriendRequest(credentials=TOKEN, friend='unexist_user')
     )
     assert response.status == 2
-    response = send_message.AddFriend(
-        AddFriendRequest(credentials=TOKEN, friend=USER_2)
-    )
-    assert response.status == 2

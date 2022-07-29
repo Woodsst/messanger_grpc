@@ -180,7 +180,7 @@ class Orm:
         """SQL-request for getting information about the client"""
 
         result = await self.con.fetch("""
-        SELECT username, friend_list, room_list
+        SELECT username
         FROM clients
         WHERE username=$1
         """, name)
@@ -241,6 +241,7 @@ class Orm:
 
     async def add_friend(self, user_name: str, friend_name: str) -> bool:
         """SQL-request to add a friend"""
+
         async with self.con.transaction():
             if await self.check_friend(friend_name, user_name):
                 await self.append_in_friend_list(user_name, friend_name)
@@ -252,22 +253,23 @@ class Orm:
         """SQL-request to append a friend to the friend list"""
 
         await self.con.execute("""
-        UPDATE clients
-        SET friend_list = array_append(friend_list, $1)
-        WHERE username = $2
+        INSERT INTO clients_friends 
+        (username, client_friend)
+        VALUES 
+        ($2, $1)
         """, friend_name, user_name)
 
     async def check_friend_in_friend_list(self, friend_name: str, user_name: str) -> bool:
         """SQL-request to check if a friend is in the friends list"""
 
         result = await self.con.fetch("""
-        SELECT array_position(friend_list, $1)
-        FROM clients
-        WHERE username=$2
-        """, friend_name, user_name)
-        if result[0][0] is None:
-            return False
-        return True
+        SELECT client_friend
+        FROM clients_friends
+        WHERE username=$1
+        """, user_name)
+        if friend_name in result:
+            return True
+        return False
 
     async def client_exist(self, user_name: str) -> bool:
         """SQL-request to verify the existence of a client"""
@@ -360,8 +362,6 @@ class Orm:
 
         result = {
             "username": data[0]['username'],
-            "friend_list": data[0]['friend_list'],
-            "room_list": data[0]['room_list']
         }
 
         result = json.dumps(result)
