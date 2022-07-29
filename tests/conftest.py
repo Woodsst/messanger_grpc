@@ -1,5 +1,4 @@
 import os
-import sys
 import time
 
 import grpc
@@ -9,8 +8,6 @@ from server.proto_api.server_proto_pb2_grpc import MessangerStub
 from tests.config import Settings
 from tests.orm import Orm
 from tests.server_command import terminate_server
-# from proto_api.server_proto_pb2_grpc import MessangerStub
-print(sys.path)
 
 config = Settings()
 

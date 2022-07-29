@@ -204,6 +204,7 @@ class Orm:
 
     async def add_new_room(self, room_name: str, creator: str) -> bool:
         """SQL-request to create a new room"""
+
         async with self.con.transaction():
             try:
                 await self.con.execute("""
@@ -226,9 +227,10 @@ class Orm:
         """SQL-request to add room in creator room list"""
 
         await self.con.execute("""
-            UPDATE clients
-            SET room_list = array_append(room_list, $1)
-            WHERE username = $2
+            INSERT INTO clients_groups 
+            (username, client_group)
+            VALUES
+            ($2, $1)
             """, room_name, creator)
 
     async def add_creator_in_room(self, room_name: str, creator: str):
