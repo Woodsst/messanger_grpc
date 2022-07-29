@@ -336,9 +336,8 @@ class Orm:
         """SQL-request to remove a room from the list rooms"""
 
         await self.con.execute("""
-        UPDATE clients
-        SET room_list = array_remove(room_list, $1)
-        WHERE username = $2
+        DELETE FROM clients_groups
+        WHERE username = $2 AND client_group = $1
         """, room, username)
 
     async def table_exist(self, room):

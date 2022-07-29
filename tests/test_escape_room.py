@@ -1,13 +1,11 @@
 from tests.client_data_for_tests import TOKEN, BAD_TOKEN, ROOM
-from server.proto_api.server_proto_pb2 import EscapeRoomRequest, JoinRoomRequest, CreateRoomRequest
+from server.proto_api.server_proto_pb2 import EscapeRoomRequest, CreateRoomRequest
 
 
 def test_escape_room(send_message, orm):
     send_message.CreateRoom(
         CreateRoomRequest(credentials=TOKEN, room=ROOM)
     )
-    send_message.JoinRoom(
-        JoinRoomRequest(credentials=TOKEN, room=ROOM))
     response = send_message.RoomEscape(
         EscapeRoomRequest(credentials=TOKEN, room=ROOM)
     )
