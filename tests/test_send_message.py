@@ -1,4 +1,4 @@
-from tests.src.client_data_for_tests import USER, USER_2, TOKEN, TOKEN_USER_2, ROOM, LOG_ROOM, BAD_TOKEN
+from tests.src.client_data_for_tests import USER, generate_friend, USER_2, TOKEN, TOKEN_USER_2, ROOM, LOG_ROOM, BAD_TOKEN
 from server.proto_api.server_proto_pb2 import Message, CreateRoomRequest
 
 
@@ -20,6 +20,7 @@ def test_send_message_to_room_error(send_message, orm):
 
 
 def test_send_message_for_friend(send_message, orm):
+    generate_friend(send_message)
     response = send_message.SendMessage(
         Message(message='hello friend', addressee=USER_2, credentials=TOKEN))
     assert response.status == 1

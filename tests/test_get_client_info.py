@@ -37,6 +37,7 @@ def test_get_client_info_bad_request(send_message):
 
 
 def test_client_get_update_room(send_message, orm):
+    generate_friend(send_message)
     send_message.CreateRoom(CreateRoomRequest(
         credentials=TOKEN, room=ROOM
     ))

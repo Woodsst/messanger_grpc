@@ -133,13 +133,14 @@ class Orm:
         """SQL-request for checking the availability of a room in the client's room list"""
 
         result = await self.con.fetch("""
-        SELECT array_position(room_list, $1)
-        FROM clients
-        WHERE username=$2
-        """, room_name, username)
-        if result[0][0] is None:
-            return False
-        return True
+        SELECT client_group
+        FROM clients_groups
+        WHERE username=$1
+        """, username)
+        room_list = [x.get('client_group') for x in result]
+        if room_name in room_list:
+            return True
+        return False
 
     async def message_for_friend(self, message: str, addressee: str, username: str) -> bool:
         """SQL-request for write a message to the friend log"""
@@ -271,7 +272,8 @@ class Orm:
         FROM clients_friends
         WHERE username=$1
         """, user_name)
-        if friend_name in result:
+        friend_list = [x.get('client_friend') for x in result]
+        if friend_name in friend_list:
             return True
         return False
 
@@ -379,5 +381,4 @@ class Orm:
         result = []
         for i in record_list:
             result.append(dict(i))
-        # r = [dict(x) for x in record_list]
         return result
