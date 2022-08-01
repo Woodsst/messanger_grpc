@@ -5,9 +5,9 @@ import grpc
 import pytest
 
 from server.proto_api.server_proto_pb2_grpc import MessangerStub
-from tests.config import Settings
-from tests.orm import Orm
-from tests.server_command import terminate_server
+from tests.src.config import Settings
+from tests.src.orm import Orm
+from tests.src.server_command import terminate_server
 
 config = Settings()
 

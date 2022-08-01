@@ -3,7 +3,7 @@ import time
 import psycopg
 from psycopg import sql
 
-from tests.config import Settings
+from tests.src.config import Settings
 
 
 class Orm:

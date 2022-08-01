@@ -1,7 +1,7 @@
 import json
 import time
 
-from tests.client_data_for_tests import TOKEN, USER, BAD_TOKEN, BAD_JWT, LOG_ROOM, ROOM, USER_2
+from tests.src.client_data_for_tests import TOKEN, USER, BAD_TOKEN, BAD_JWT, LOG_ROOM, ROOM, USER_2
 from server.proto_api.server_proto_pb2 import RequestSelfInfo, Message, CreateRoomRequest
 
 

@@ -32,6 +32,7 @@ class Settings:
         raw_path = os.path.dirname(__file__)
         raw_path = raw_path.split('/')
         raw_path.pop(-1)
+        raw_path.pop(-1)
         raw_path.append('config.yml')
         path = '/'.join(raw_path)
         return path
@@ -40,17 +41,17 @@ class Settings:
         with open(self.path, 'w') as file:
             yaml.dump({
                 "db_name": "test_messanger",
-                "db_username": "test",
+                "db_username": "wood",
                 "db_password": "123",
                 "db_port": 5432,
-                "db_host": "database",
+                "db_host": "localhost",
                 "secret_key": "secret_key"
             }, file)
         self.db_name = "test_messanger"
-        self.db_username = "test"
+        self.db_username = "wood"
         self.db_password = "123"
         self.db_port = 5432
-        self.db_host = "database"
+        self.db_host = "localhost"
         self.secret_key = "secret_key"
 
     def reset_default_config(self):
