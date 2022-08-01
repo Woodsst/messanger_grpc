@@ -180,9 +180,11 @@ class Orm:
         """SQL-request for getting information about the client"""
 
         result = await self.con.fetch("""
-        SELECT username
+        SELECT clients.username, client_friend, client_group
         FROM clients
-        WHERE username=$1
+        LEFT JOIN clients_friends ON clients.username = clients_friends.username
+        LEFT JOIN clients_groups ON clients.username = clients_groups.username
+        WHERE clients.username=$1;
         """, name)
         if len(result) == 0:
             return False
@@ -363,6 +365,8 @@ class Orm:
 
         result = {
             "username": data[0]['username'],
+            "friend_list": [friend.get('client_friend') for friend in data],
+            "room_list": [room.get('client_group') for room in data]
         }
 
         result = json.dumps(result)
@@ -375,4 +379,5 @@ class Orm:
         result = []
         for i in record_list:
             result.append(dict(i))
+        # r = [dict(x) for x in record_list]
         return result

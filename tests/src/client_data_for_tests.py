@@ -1,6 +1,8 @@
 import jwt
 
 from tests.src.config import Settings
+from server.proto_api.server_proto_pb2 import AddFriendRequest, JoinRoomRequest
+from server.proto_api.server_proto_pb2_grpc import MessangerStub
 
 USER = 'test_user'
 PASSWD = 'passwd'
@@ -23,3 +25,25 @@ def jwt_encoder(username: str) -> bytes:
 TOKEN_USER_2 = jwt_encoder(USER_2)
 TOKEN = jwt_encoder(USER)
 BAD_TOKEN = jwt_encoder('wrong_username')
+
+
+def generate_friend(stub: MessangerStub):
+
+    for user in (USER_3, USER_2):
+        stub.AddFriend(
+            AddFriendRequest(
+                credentials=TOKEN,
+                friend=user
+            )
+        )
+
+
+def join_rooms(stub: MessangerStub):
+
+    for room in (ROOM, ROOM_2):
+        stub.JoinRoom(
+            JoinRoomRequest(
+                credentials=TOKEN,
+                room=room
+            )
+        )

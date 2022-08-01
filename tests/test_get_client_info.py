@@ -1,19 +1,25 @@
 import json
 import time
 
-from tests.src.client_data_for_tests import TOKEN, USER, BAD_TOKEN, BAD_JWT, LOG_ROOM, ROOM, USER_2
+from tests.src.client_data_for_tests import TOKEN, join_rooms, USER, BAD_TOKEN, BAD_JWT, LOG_ROOM, ROOM, USER_2, generate_friend
 from server.proto_api.server_proto_pb2 import RequestSelfInfo, Message, CreateRoomRequest
 
 
 def test_get_client_info(send_message, orm):
+
+    generate_friend(send_message)
+    join_rooms(send_message)
+
     response = send_message.InformationRequest(
         RequestSelfInfo(credentials=TOKEN, time=int(time.time())))
+
     assert response.status == 1
     response = json.loads(response.json_info)
+
     assert len(response) == 3
     assert response['info']['username'] == USER
     assert len(response['info']['friend_list']) == 2
-    assert len(response['info']['room_list']) == 3
+    assert len(response['info']['room_list']) == 2
 
 
 def test_get_client_info_bad_request(send_message):
