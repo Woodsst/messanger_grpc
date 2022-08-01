@@ -297,9 +297,8 @@ class Orm:
         elif not await self.check_friend_in_friend_list(friend_name, user_name):
             return False
         await self.con.execute("""
-            UPDATE clients
-            SET friend_list = array_remove(friend_list, $1)
-            WHERE username = $2
+            DELETE FROM clients_friends
+            WHERE username = $2 AND  client_friend = $1
             """, friend_name, user_name)
         return True
 
