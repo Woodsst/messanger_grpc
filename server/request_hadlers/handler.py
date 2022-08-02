@@ -15,6 +15,7 @@ class Requests(enum.Enum):
     ADD_FRIEND = "Add friend"
     REMOVE_FRIEND = "Remove friend"
     REMOVE_ROOM = "Remove room"
+    MESSAGES_UPDATE = "Messages update"
 
 
 class RequestHandler:
@@ -35,6 +36,9 @@ class RequestHandler:
 
         elif request_type == Requests.INFORMATION_REQUEST:
             return await client.get_client_info_update()
+
+        elif request_type == Requests.MESSAGES_UPDATE:
+            return await client.messages_update(request.update, request.time)
 
         requests = {
             Requests.REMOVE_ROOM: client.remove_room,

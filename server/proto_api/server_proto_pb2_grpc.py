@@ -58,7 +58,7 @@ class MessangerStub(object):
         self.MessagesUpdate = channel.unary_unary(
                 '/Messanger/MessagesUpdate',
                 request_serializer=server__proto__pb2.MessagesUpdateRequest.SerializeToString,
-                response_deserializer=server__proto__pb2.Update_data.FromString,
+                response_deserializer=server__proto__pb2.UpdateData.FromString,
                 )
 
 
@@ -175,7 +175,7 @@ def add_MessangerServicer_to_server(servicer, server):
             'MessagesUpdate': grpc.unary_unary_rpc_method_handler(
                     servicer.MessagesUpdate,
                     request_deserializer=server__proto__pb2.MessagesUpdateRequest.FromString,
-                    response_serializer=server__proto__pb2.Update_data.SerializeToString,
+                    response_serializer=server__proto__pb2.UpdateData.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -337,6 +337,6 @@ class Messanger(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Messanger/MessagesUpdate',
             server__proto__pb2.MessagesUpdateRequest.SerializeToString,
-            server__proto__pb2.Update_data.FromString,
+            server__proto__pb2.UpdateData.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

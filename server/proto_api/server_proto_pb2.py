@@ -15,7 +15,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12server_proto.proto\"=\n\x0bUpdate_data\x12\x1b\n\x06status\x18\x01 \x01(\x0e\x32\x0b.CodeResult\x12\x11\n\tjson_info\x18\x02 \x01(\t\":\n\x15MessagesUpdateRequest\x12\x13\n\x0b\x63redentials\x18\x01 \x01(\t\x12\x0c\n\x04time\x18\x02 \x01(\x05\"6\n\x11RemoveRoomReqeust\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"<\n\nClientInfo\x12\x1b\n\x06status\x18\x01 \x01(\x0e\x32\x0b.CodeResult\x12\x11\n\tjson_info\x18\x02 \x01(\t\"4\n\x0fRequestSelfInfo\x12\x13\n\x0b\x63redentials\x18\x01 \x01(\t\x12\x0c\n\x04time\x18\x02 \x01(\x05\"\'\n\x08Response\x12\x1b\n\x06status\x18\x01 \x01(\x0e\x32\x0b.CodeResult\"B\n\x07Message\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x11\n\taddressee\x18\x02 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x03 \x01(\t\"7\n\x10\x41\x64\x64\x46riendRequest\x12\x0e\n\x06\x66riend\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\":\n\x13RemoveFriendRequest\x12\x0e\n\x06\x66riend\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"6\n\x11\x43reateRoomRequest\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"4\n\x0fJoinRoomRequest\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"6\n\x11\x45scapeRoomRequest\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t*1\n\nCodeResult\x12\x12\n\x0eunknown_format\x10\x00\x12\x06\n\x02ok\x10\x01\x12\x07\n\x03\x62\x61\x64\x10\x02\x32\xba\x03\n\tMessanger\x12\x35\n\x12InformationRequest\x12\x10.RequestSelfInfo\x1a\x0b.ClientInfo\"\x00\x12$\n\x0bSendMessage\x12\x08.Message\x1a\t.Response\"\x00\x12+\n\tAddFriend\x12\x11.AddFriendRequest\x1a\t.Response\"\x00\x12\x31\n\x0cRemoveFriend\x12\x14.RemoveFriendRequest\x1a\t.Response\"\x00\x12-\n\nCreateRoom\x12\x12.CreateRoomRequest\x1a\t.Response\"\x00\x12)\n\x08JoinRoom\x12\x10.JoinRoomRequest\x1a\t.Response\"\x00\x12-\n\nRoomEscape\x12\x12.EscapeRoomRequest\x1a\t.Response\"\x00\x12-\n\nRemoveRoom\x12\x12.RemoveRoomReqeust\x1a\t.Response\"\x00\x12\x38\n\x0eMessagesUpdate\x12\x16.MessagesUpdateRequest\x1a\x0c.Update_data\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12server_proto.proto\"<\n\nUpdateData\x12\x1b\n\x06status\x18\x01 \x01(\x0e\x32\x0b.CodeResult\x12\x11\n\tjson_info\x18\x02 \x01(\t\"J\n\x15MessagesUpdateRequest\x12\x13\n\x0b\x63redentials\x18\x01 \x01(\t\x12\x0e\n\x06update\x18\x02 \x01(\t\x12\x0c\n\x04time\x18\x03 \x01(\x05\"6\n\x11RemoveRoomReqeust\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"<\n\nClientInfo\x12\x1b\n\x06status\x18\x01 \x01(\x0e\x32\x0b.CodeResult\x12\x11\n\tjson_info\x18\x02 \x01(\t\"4\n\x0fRequestSelfInfo\x12\x13\n\x0b\x63redentials\x18\x01 \x01(\t\x12\x0c\n\x04time\x18\x02 \x01(\x05\"\'\n\x08Response\x12\x1b\n\x06status\x18\x01 \x01(\x0e\x32\x0b.CodeResult\"B\n\x07Message\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x11\n\taddressee\x18\x02 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x03 \x01(\t\"7\n\x10\x41\x64\x64\x46riendRequest\x12\x0e\n\x06\x66riend\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\":\n\x13RemoveFriendRequest\x12\x0e\n\x06\x66riend\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"6\n\x11\x43reateRoomRequest\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"4\n\x0fJoinRoomRequest\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t\"6\n\x11\x45scapeRoomRequest\x12\x0c\n\x04room\x18\x01 \x01(\t\x12\x13\n\x0b\x63redentials\x18\x02 \x01(\t*1\n\nCodeResult\x12\x12\n\x0eunknown_format\x10\x00\x12\x06\n\x02ok\x10\x01\x12\x07\n\x03\x62\x61\x64\x10\x02\x32\xb9\x03\n\tMessanger\x12\x35\n\x12InformationRequest\x12\x10.RequestSelfInfo\x1a\x0b.ClientInfo\"\x00\x12$\n\x0bSendMessage\x12\x08.Message\x1a\t.Response\"\x00\x12+\n\tAddFriend\x12\x11.AddFriendRequest\x1a\t.Response\"\x00\x12\x31\n\x0cRemoveFriend\x12\x14.RemoveFriendRequest\x1a\t.Response\"\x00\x12-\n\nCreateRoom\x12\x12.CreateRoomRequest\x1a\t.Response\"\x00\x12)\n\x08JoinRoom\x12\x10.JoinRoomRequest\x1a\t.Response\"\x00\x12-\n\nRoomEscape\x12\x12.EscapeRoomRequest\x1a\t.Response\"\x00\x12-\n\nRemoveRoom\x12\x12.RemoveRoomReqeust\x1a\t.Response\"\x00\x12\x37\n\x0eMessagesUpdate\x12\x16.MessagesUpdateRequest\x1a\x0b.UpdateData\"\x00\x62\x06proto3')
 
 _CODERESULT = DESCRIPTOR.enum_types_by_name['CodeResult']
 CodeResult = enum_type_wrapper.EnumTypeWrapper(_CODERESULT)
@@ -24,7 +24,7 @@ ok = 1
 bad = 2
 
 
-_UPDATE_DATA = DESCRIPTOR.message_types_by_name['Update_data']
+_UPDATEDATA = DESCRIPTOR.message_types_by_name['UpdateData']
 _MESSAGESUPDATEREQUEST = DESCRIPTOR.message_types_by_name['MessagesUpdateRequest']
 _REMOVEROOMREQEUST = DESCRIPTOR.message_types_by_name['RemoveRoomReqeust']
 _CLIENTINFO = DESCRIPTOR.message_types_by_name['ClientInfo']
@@ -36,12 +36,12 @@ _REMOVEFRIENDREQUEST = DESCRIPTOR.message_types_by_name['RemoveFriendRequest']
 _CREATEROOMREQUEST = DESCRIPTOR.message_types_by_name['CreateRoomRequest']
 _JOINROOMREQUEST = DESCRIPTOR.message_types_by_name['JoinRoomRequest']
 _ESCAPEROOMREQUEST = DESCRIPTOR.message_types_by_name['EscapeRoomRequest']
-Update_data = _reflection.GeneratedProtocolMessageType('Update_data', (_message.Message,), {
-  'DESCRIPTOR' : _UPDATE_DATA,
+UpdateData = _reflection.GeneratedProtocolMessageType('UpdateData', (_message.Message,), {
+  'DESCRIPTOR' : _UPDATEDATA,
   '__module__' : 'server_proto_pb2'
-  # @@protoc_insertion_point(class_scope:Update_data)
+  # @@protoc_insertion_point(class_scope:UpdateData)
   })
-_sym_db.RegisterMessage(Update_data)
+_sym_db.RegisterMessage(UpdateData)
 
 MessagesUpdateRequest = _reflection.GeneratedProtocolMessageType('MessagesUpdateRequest', (_message.Message,), {
   'DESCRIPTOR' : _MESSAGESUPDATEREQUEST,
@@ -124,32 +124,32 @@ _MESSANGER = DESCRIPTOR.services_by_name['Messanger']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _CODERESULT._serialized_start=709
-  _CODERESULT._serialized_end=758
-  _UPDATE_DATA._serialized_start=22
-  _UPDATE_DATA._serialized_end=83
-  _MESSAGESUPDATEREQUEST._serialized_start=85
-  _MESSAGESUPDATEREQUEST._serialized_end=143
-  _REMOVEROOMREQEUST._serialized_start=145
-  _REMOVEROOMREQEUST._serialized_end=199
-  _CLIENTINFO._serialized_start=201
-  _CLIENTINFO._serialized_end=261
-  _REQUESTSELFINFO._serialized_start=263
-  _REQUESTSELFINFO._serialized_end=315
-  _RESPONSE._serialized_start=317
-  _RESPONSE._serialized_end=356
-  _MESSAGE._serialized_start=358
-  _MESSAGE._serialized_end=424
-  _ADDFRIENDREQUEST._serialized_start=426
-  _ADDFRIENDREQUEST._serialized_end=481
-  _REMOVEFRIENDREQUEST._serialized_start=483
-  _REMOVEFRIENDREQUEST._serialized_end=541
-  _CREATEROOMREQUEST._serialized_start=543
-  _CREATEROOMREQUEST._serialized_end=597
-  _JOINROOMREQUEST._serialized_start=599
-  _JOINROOMREQUEST._serialized_end=651
-  _ESCAPEROOMREQUEST._serialized_start=653
-  _ESCAPEROOMREQUEST._serialized_end=707
-  _MESSANGER._serialized_start=761
-  _MESSANGER._serialized_end=1203
+  _CODERESULT._serialized_start=724
+  _CODERESULT._serialized_end=773
+  _UPDATEDATA._serialized_start=22
+  _UPDATEDATA._serialized_end=82
+  _MESSAGESUPDATEREQUEST._serialized_start=84
+  _MESSAGESUPDATEREQUEST._serialized_end=158
+  _REMOVEROOMREQEUST._serialized_start=160
+  _REMOVEROOMREQEUST._serialized_end=214
+  _CLIENTINFO._serialized_start=216
+  _CLIENTINFO._serialized_end=276
+  _REQUESTSELFINFO._serialized_start=278
+  _REQUESTSELFINFO._serialized_end=330
+  _RESPONSE._serialized_start=332
+  _RESPONSE._serialized_end=371
+  _MESSAGE._serialized_start=373
+  _MESSAGE._serialized_end=439
+  _ADDFRIENDREQUEST._serialized_start=441
+  _ADDFRIENDREQUEST._serialized_end=496
+  _REMOVEFRIENDREQUEST._serialized_start=498
+  _REMOVEFRIENDREQUEST._serialized_end=556
+  _CREATEROOMREQUEST._serialized_start=558
+  _CREATEROOMREQUEST._serialized_end=612
+  _JOINROOMREQUEST._serialized_start=614
+  _JOINROOMREQUEST._serialized_end=666
+  _ESCAPEROOMREQUEST._serialized_start=668
+  _ESCAPEROOMREQUEST._serialized_end=722
+  _MESSANGER._serialized_start=776
+  _MESSANGER._serialized_end=1217
 # @@protoc_insertion_point(module_scope)

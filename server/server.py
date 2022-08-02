@@ -45,6 +45,10 @@ class Greeter(MessangerServicer):
         """Handler of a request to remove a room"""
         return await self.handler.handle(request, Requests.REMOVE_ROOM)
 
+    async def MessagesUpdate(self, request, context):
+        """Handler of a request to update messages"""
+        return await self.handler.handle(request, Requests.MESSAGES_UPDATE)
+
 
 async def server_run(server_address: str, orm: Orm):
     """starting grpc server"""

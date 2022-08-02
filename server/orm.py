@@ -80,37 +80,12 @@ class Orm:
             return True
         return False
 
-    async def update_friend_logs(self, username: str, friend_list: list, update_time: int) -> dict:
-        """Collecting updates for friends"""
-
-        update_friend_messages = {}
-        for friend in friend_list:
-            log = await self.check_friend_log_exist(friend, username)
-            if log:
-                update = await self.check_update_in_log(log, update_time)
-                if update is not False:
-                    update = self.record_parce(update)
-                    update_friend_messages[friend] = update
-        return update_friend_messages
-
-    async def update_room_logs(self, room_list: list, update_time: int) -> dict:
-        """Collecting updates for rooms"""
-
-        update_room_messages = {}
-        for room in room_list:
-            room = f'log_{room}'
-            if await self.table_exist(room):
-                update = await self.check_update_in_log(room, update_time)
-                update = self.record_parce(update)
-                update_room_messages[room] = update
-        return update_room_messages
-
     async def check_update_in_log(self, log_name: str, update_time: int):
         """SQL-reqeust for updates in log table"""
 
         result = await self.con.fetch("""
-        SELECT *
-        FROM {}
+        SELECT member, message, message_time
+        FROM {0}
         WHERE message_time > $1
         """.format(log_name), update_time)
         if len(result) > 0:
@@ -371,13 +346,4 @@ class Orm:
         }
 
         result = json.dumps(result)
-        return result
-
-    @staticmethod
-    def record_parce(record_list: list):
-        """Formatting Record to list"""
-
-        result = []
-        for i in record_list:
-            result.append(dict(i))
         return result

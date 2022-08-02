@@ -1,7 +1,7 @@
 import json
 
 from server.orm import Orm
-from server.proto_api.server_proto_pb2 import Response, CodeResult, ClientInfo
+from server.proto_api.server_proto_pb2 import Response, CodeResult, ClientInfo, UpdateData
 
 
 class Client:
@@ -61,3 +61,11 @@ class Client:
         info = json.loads(info)
         return ClientInfo(status=CodeResult.Value('ok'),
                           json_info=json.dumps(info))
+
+    async def messages_update(self, update: str, update_time: int) -> UpdateData:
+        if update[:2] == 'r_':
+            update = f'log_{update}'
+            update = await self.orm.check_update_in_log(update, update_time)
+            update = [dict(record) for record in update]
+            return UpdateData(status=CodeResult.Value('ok'),
+                              json_info=json.dumps(update))
