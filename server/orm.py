@@ -98,7 +98,7 @@ class Orm:
         if await self.table_exist(addressee) and await self.check_room_in_room_list(user, addressee):
             addressee = f'log_{addressee}'
             await self.con.execute("""
-            INSERT INTO {} (member, message, message_time)
+            INSERT INTO {0} (member, message, message_time)
             VALUES ($1, $2, $3)
             """.format(addressee), user, message, int(time.time()))
             return True

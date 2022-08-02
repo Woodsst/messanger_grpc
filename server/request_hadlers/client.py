@@ -66,6 +66,11 @@ class Client:
         if update[:2] == 'r_':
             update = f'log_{update}'
             update = await self.orm.check_update_in_log(update, update_time)
-            update = [dict(record) for record in update]
             return UpdateData(status=CodeResult.Value('ok'),
-                              json_info=json.dumps(update))
+                              json_info=json.dumps([dict(record) for record in update]))
+
+        log_name = f'log_{update}_{self.name}'
+        update = await self.orm.check_update_in_log(log_name, update_time)
+
+        return UpdateData(status=CodeResult.Value('ok'),
+                          json_info=json.dumps([dict(record) for record in update]))
