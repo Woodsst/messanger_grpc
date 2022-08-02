@@ -34,7 +34,7 @@ class RequestHandler:
             return await client.send_message(request.message, request.addressee)
 
         elif request_type == Requests.INFORMATION_REQUEST:
-            return await client.get_messages_update(request.time)
+            return await client.get_client_info_update()
 
         requests = {
             Requests.REMOVE_ROOM: client.remove_room,

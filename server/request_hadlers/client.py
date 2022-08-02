@@ -56,13 +56,8 @@ class Client:
             return Response(status=CodeResult.Value('ok'))
         return Response(status=CodeResult.Value('bad'))
 
-    async def get_messages_update(self, time: int) -> dict:
+    async def get_client_info_update(self) -> ClientInfo:
         info = await self.orm.get_client_information(self.name)
         info = json.loads(info)
-        friends_update = await self.orm.update_friend_logs(self.name, info['friend_list'], time)
-        rooms_update = await self.orm.update_room_logs(info['room_list'], time)
-        updates = {"friends_update": friends_update,
-                   "rooms_update": rooms_update,
-                   "info": info}
         return ClientInfo(status=CodeResult.Value('ok'),
-                          json_info=json.dumps(updates))
+                          json_info=json.dumps(info))

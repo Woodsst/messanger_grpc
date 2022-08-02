@@ -1,13 +1,14 @@
 import json
+from typing import Union
 
 import jwt
 
 from server.config import Settings
-from server.orm import Orm
 from server.logging_config import logger
+from server.orm import Orm
 
 
-def credentials_validation(credentials: str) -> str or bool:
+def credentials_validation(credentials: str) -> Union[str, bool]:
     """Decode client jwt"""
 
     key = Settings()
@@ -20,7 +21,7 @@ def credentials_validation(credentials: str) -> str or bool:
     return _decode
 
 
-async def get_client_info(credentials: str, db: Orm) -> dict or bool:
+async def get_client_info(credentials: str, db: Orm) -> Union[dict, bool]:
     """Getting client information from the database"""
 
     client = credentials_validation(credentials)

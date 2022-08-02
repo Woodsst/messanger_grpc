@@ -1,7 +1,7 @@
 import jwt
 
 from tests.src.config import Settings
-from server.proto_api.server_proto_pb2 import AddFriendRequest, JoinRoomRequest
+from server.proto_api.server_proto_pb2 import AddFriendRequest, JoinRoomRequest, CreateRoomRequest, Message
 from server.proto_api.server_proto_pb2_grpc import MessangerStub
 
 USER = 'test_user'
@@ -47,3 +47,34 @@ def join_rooms(stub: MessangerStub):
                 room=room
             )
         )
+
+
+def generate_messages_for_room(stub: MessangerStub):
+    stub.CreateRoom(CreateRoomRequest(
+        credentials=TOKEN, room=ROOM
+    ))
+    number = 0
+    for _ in range(5):
+        message_ = f'hello_{number}'
+        stub.SendMessage(
+            Message(
+                credentials=TOKEN,
+                addressee=LOG_ROOM,
+                message=message_
+            )
+        )
+        number += 1
+
+
+def generate_messages_for_friend(stub: MessangerStub):
+    number = 0
+    for _ in range(5):
+        message = f'hello_{number}'
+        stub.SendMessage(
+            Message(
+                credentials=TOKEN,
+                addressee=USER_2,
+                message=message
+            )
+        )
+        number += 1
