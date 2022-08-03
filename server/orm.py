@@ -134,8 +134,8 @@ class Orm:
         The friends' journal is created based on their names,
         so there are two possible variants of the journal name"""
 
-        first = f'log_{addressee}_{username}'
-        second = f'log_{username}_{addressee}'
+        first = f'log_{addressee}_{username}'.lower()
+        second = f'log_{username}_{addressee}'.lower()
         if await self.table_exist(first):
             return first
         if await self.table_exist(second):

@@ -69,7 +69,7 @@ class Client:
             return UpdateData(status=CodeResult.Value('ok'),
                               json_info=json.dumps([dict(record) for record in update]))
 
-        log_name = f'log_{update}_{self.name}'
+        log_name = await self.orm.check_friend_log_exist(update, self.name)
         update = await self.orm.check_update_in_log(log_name, update_time)
 
         return UpdateData(status=CodeResult.Value('ok'),
