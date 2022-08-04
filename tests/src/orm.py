@@ -37,7 +37,9 @@ class Orm:
         DROP TABLE IF EXISTS log_r_test_room;
         DROP TABLE IF EXISTS r_test_room;
         DROP TABLE IF EXISTS r_test_room_1;
+        DROP TABLE IF EXISTS r_test_room_2;
         DROP TABLE IF EXISTS log_r_test_room_1;
+        DROP TABLE IF EXISTS log_r_test_room_2;
         DROP TABLE IF EXISTS log_test_user_2_test_user;
         """)
         self.conn.commit()

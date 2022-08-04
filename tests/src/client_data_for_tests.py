@@ -38,6 +38,16 @@ def generate_friend(stub: MessangerStub):
         )
 
 
+def generate_rooms(stub: MessangerStub):
+
+    for room in (ROOM, ROOM_2):
+        stub.CreateRoom(
+            CreateRoomRequest(
+                credentials=TOKEN, room=room
+            )
+        )
+
+
 def join_rooms(stub: MessangerStub):
 
     for room in (ROOM, ROOM_2):
@@ -50,9 +60,7 @@ def join_rooms(stub: MessangerStub):
 
 
 def generate_messages_for_room(stub: MessangerStub):
-    stub.CreateRoom(CreateRoomRequest(
-        credentials=TOKEN, room=ROOM
-    ))
+    generate_rooms(stub)
     number = 0
     for _ in range(5):
         message_ = f'hello_{number}'

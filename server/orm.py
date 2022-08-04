@@ -339,10 +339,16 @@ class Orm:
     def data_to_dict(data: tuple) -> dict:
         """Formatting tuple(Record) to dict for JSON dump"""
 
+        friend_list = {friend.get('client_friend') for friend in data}
+        if None in friend_list: friend_list.remove(None)
+
+        room_list = {room.get('client_group') for room in data}
+        if None in room_list: room_list.remove(None)
+
         result = {
             "username": data[0]['username'],
-            "friend_list": [friend.get('client_friend') for friend in data],
-            "room_list": [room.get('client_group') for room in data]
+            "friend_list": tuple(friend_list),
+            "room_list": tuple(room_list)
         }
 
         result = json.dumps(result)

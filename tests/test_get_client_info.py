@@ -1,13 +1,14 @@
 import json
 import time
 
-from tests.src.client_data_for_tests import TOKEN, join_rooms, USER, BAD_TOKEN, BAD_JWT, generate_friend
+from tests.src.client_data_for_tests import TOKEN, join_rooms, USER, BAD_TOKEN, BAD_JWT, generate_friend, generate_rooms
 from server.proto_api.server_proto_pb2 import RequestSelfInfo
 
 
 def test_get_client_info(send_message, orm):
 
     generate_friend(send_message)
+    generate_rooms(send_message)
     join_rooms(send_message)
 
     response = send_message.InformationRequest(
