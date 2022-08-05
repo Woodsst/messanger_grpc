@@ -88,8 +88,7 @@ class Orm:
             FROM clients_groups
             WHERE username=$1
             """, username)
-            room_list = [x.get('client_group') for x in result]
-            if room_name in room_list:
+            if room_name in [x.get('client_group') for x in result]:
                 return True
             return False
 
@@ -98,6 +97,7 @@ class Orm:
 
         if await self.check_friend_in_friend_list(addressee, username):
             log_name = await self.create_log_friend_chat(addressee, username)
+
             async with self.pool.acquire() as con:
                 await con.execute("""
                 INSERT INTO {} (member, message, message_time)
