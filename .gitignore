@@ -11,3 +11,4 @@ server/request_hadlers/__pycache__/
 tests/proto_api/__pycache__/
 .coverage
 tests/src/__pycache__/
+__pycache__/
